@@ -67,6 +67,6 @@ Portal: https://adib-dev.com/admin
                 from_email=settings.DEFAULT_FROM_EMAIL,
                 to=[settings.ADMIN_EMAIL],
             )
-            email.send(timeout=5, fail_silently=False)  # ← MIT TIMEOUT!
+            email.send(fail_silently=False)
         except Exception as e:
             print(f"Email error: {e}")
