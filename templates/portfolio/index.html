@@ -99,102 +99,65 @@
             }
         }
 
-        @keyframes slideInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
+        .slide-in {
+            animation: slideIn 0.8s ease-in-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideIn {
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .slide-in {
-            animation: slideInUp 0.6s ease-out forwards;
-        }
-
         .sticky-header {
             position: sticky;
             top: 0;
             background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
             border-bottom: 1px solid var(--border-color);
-            z-index: 1000;
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
         }
 
         .language-switch {
             display: flex;
             gap: 0.5rem;
-            background: var(--bg-secondary);
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            border: 1px solid var(--border-color);
         }
 
         .lang-btn {
-            padding: 0.5rem 1rem;
-            background: transparent;
-            border: none;
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-secondary);
             color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
             cursor: pointer;
-            border-radius: 0.25rem;
             transition: all 0.3s ease;
-            font-size: 0.875rem;
             font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--text-primary);
         }
 
         .lang-btn.active {
             background: var(--color-primary);
             color: white;
+            border-color: var(--color-primary);
         }
 
-        .htmx-request .htmx-indicator {
-            display: inline-block;
-        }
-
-        .htmx-indicator {
-            display: none;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            padding: 1rem 1.5rem;
-            border-radius: 0.5rem;
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            animation: slideInUp 0.3s ease-out;
-            z-index: 9999;
-        }
-
-        .toast.success {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.1);
-        }
-
-        .toast.error {
-            border-color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .service-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-        }
-
+        .skill-grid,
+        .service-grid,
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 2rem;
-        }
-
-        .skill-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
         }
 
@@ -229,6 +192,28 @@
             resize: vertical;
             min-height: 120px;
         }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-in-out;
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .toast.success {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .toast.error {
+            background: rgba(239, 68, 68, 0.9);
+        }
     </style>
 </head>
 <body class="smooth-scroll" data-lang="de">
@@ -239,10 +224,10 @@
         <div class="flex justify-between items-center">
             <h1 class="text-2xl font-bold gradient-text">Adib Dev</h1>
             <div class="language-switch">
-                <button class="lang-btn active" onclick="changeLanguage('de')" data-i18n="lang_de">DE</button>
-                <button class="lang-btn" onclick="changeLanguage('en')" data-i18n="lang_en">EN</button>
-                <button class="lang-btn" onclick="changeLanguage('fr')" data-i18n="lang_fr">FR</button>
-                <button class="lang-btn" onclick="changeLanguage('ar')" data-i18n="lang_ar">AR</button>
+                <button class="lang-btn active" onclick="changeLanguage('de', event)" data-i18n="lang_de">DE</button>
+                <button class="lang-btn" onclick="changeLanguage('en', event)" data-i18n="lang_en">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('fr', event)" data-i18n="lang_fr">FR</button>
+                <button class="lang-btn" onclick="changeLanguage('ar', event)" data-i18n="lang_ar">AR</button>
             </div>
         </div>
     </div>
@@ -449,209 +434,214 @@
 <div id="toast-container"></div>
 
 <script>
-// Translations Object - Defined ONCE at the top level
-const translations = {
-    de: {
-        lang_de: 'DE',
-        lang_en: 'EN',
-        lang_fr: 'FR',
-        lang_ar: 'AR',
-        hero_title: 'Backend Developer & Problem Solver',
-        hero_subtitle: 'Spezialisiert auf Odoo, Django und Flask | Python Backend Expertise',
-        hero_description: 'Ich entwickle skalierbare Backend-Lösungen und integriere komplexe Business-Prozesse. Von Custom Odoo-Modulen bis zu REST APIs – ich mache deine Idee zur Realität.',
-        cta_contact: 'Jetzt Projekt starten',
-        section_skills: 'Fähigkeiten',
-        skill_odoo: 'Odoo ERP',
-        skill_odoo_desc: 'Custom Module, Workflows, Multi-Company Setup, PostgreSQL Optimization',
-        skill_django: 'Django & REST',
-        skill_django_desc: 'REST APIs, ORM, Authentifizierung, Celery Task Queues',
-        skill_flask: 'Flask & FastAPI',
-        skill_flask_desc: 'Lightweight APIs, Microservices, Real-time Features',
-        skill_db: 'Database Design',
-        skill_db_desc: 'PostgreSQL, Indexing, Query Optimization, Migration Strategies',
-        skill_integration: 'Integrations',
-        skill_integration_desc: 'Payment APIs, External Services, Webhooks, Data Sync',
-        skill_devops: 'DevOps & Deployment',
-        skill_devops_desc: 'Docker, CI/CD, Production Servers, Git Workflows',
-        section_services: 'Dienstleistungen',
-        service_odoo: 'Odoo Development',
-        service_odoo_desc: 'Custom Modules, Workflow Automation, Integration mit bestehenden Systemen',
-        service_django: 'Django & REST APIs',
-        service_django_desc: 'Sichere Backend-Systeme, Skalierbare APIs, Database Design',
-        service_ai: 'AI & Chatbot Engineering',
-        service_ai_desc: 'KI-gesteuerte Chatbots, LLM Integration, Automation mit Machine Learning',
-        service_consulting: 'Technical Consulting',
-        service_consulting_desc: 'Architecture Review, Performance Optimization, DevOps Strategy',
-        service_integration: 'System Integration',
-        service_integration_desc: 'Externe APIs verbinden, Daten synchronisieren, Workflows automatisieren',
-        service_mobile: 'Mobile Backend',
-        service_mobile_desc: 'APIs für iOS/Android, Real-time Features, Push Notifications',
-        service_duration_short: 'ab 2 Wochen',
-        service_duration_medium: 'ab 4 Wochen',
-        service_duration_flexible: 'Flexible',
-        section_projects: 'Projekte',
-        link_github: 'GitHub →',
-        section_contact: 'Lass uns zusammenarbeiten',
-        contact_desc: 'Schreib mir eine kurze Nachricht und ich melde mich innerhalb von 24 Stunden.',
-        form_name: 'Name',
-        form_email: 'Email',
-        form_phone: 'Telefon (optional)',
-        form_service: 'Service-Typ',
-        form_budget: 'Budget',
-        form_message: 'Nachricht',
-        btn_send: 'Nachricht senden',
-    },
-    en: {
-        lang_de: 'DE',
-        lang_en: 'EN',
-        lang_fr: 'FR',
-        lang_ar: 'AR',
-        hero_title: 'Backend Developer & Problem Solver',
-        hero_subtitle: 'Specialized in Odoo, Django and Flask | Python Backend Expertise',
-        hero_description: 'I develop scalable backend solutions and integrate complex business processes. From custom Odoo modules to REST APIs – I turn your idea into reality.',
-        cta_contact: 'Start Your Project',
-        section_skills: 'Skills',
-        skill_odoo: 'Odoo ERP',
-        skill_odoo_desc: 'Custom Modules, Workflows, Multi-Company Setup, PostgreSQL Optimization',
-        skill_django: 'Django & REST',
-        skill_django_desc: 'REST APIs, ORM, Authentication, Celery Task Queues',
-        skill_flask: 'Flask & FastAPI',
-        skill_flask_desc: 'Lightweight APIs, Microservices, Real-time Features',
-        skill_db: 'Database Design',
-        skill_db_desc: 'PostgreSQL, Indexing, Query Optimization, Migration Strategies',
-        skill_integration: 'Integrations',
-        skill_integration_desc: 'Payment APIs, External Services, Webhooks, Data Sync',
-        skill_devops: 'DevOps & Deployment',
-        skill_devops_desc: 'Docker, CI/CD, Production Servers, Git Workflows',
-        section_services: 'Services',
-        service_odoo: 'Odoo Development',
-        service_odoo_desc: 'Custom Modules, Workflow Automation, Integration with Existing Systems',
-        service_django: 'Django & REST APIs',
-        service_django_desc: 'Secure Backend Systems, Scalable APIs, Database Design',
-        service_ai: 'AI & Chatbot Engineering',
-        service_ai_desc: 'AI-powered Chatbots, LLM Integration, Machine Learning Automation',
-        service_consulting: 'Technical Consulting',
-        service_consulting_desc: 'Architecture Review, Performance Optimization, DevOps Strategy',
-        service_integration: 'System Integration',
-        service_integration_desc: 'Connect External APIs, Synchronize Data, Automate Workflows',
-        service_mobile: 'Mobile Backend',
-        service_mobile_desc: 'APIs for iOS/Android, Real-time Features, Push Notifications',
-        service_duration_short: 'from 2 weeks',
-        service_duration_medium: 'from 4 weeks',
-        service_duration_flexible: 'Flexible',
-        section_projects: 'Projects',
-        link_github: 'GitHub →',
-        section_contact: 'Let\'s Work Together',
-        contact_desc: 'Send me a quick message and I\'ll get back to you within 24 hours.',
-        form_name: 'Name',
-        form_email: 'Email',
-        form_phone: 'Phone (optional)',
-        form_service: 'Service Type',
-        form_budget: 'Budget',
-        form_message: 'Message',
-        btn_send: 'Send Message',
-    },
-    fr: {
-        lang_de: 'DE',
-        lang_en: 'EN',
-        lang_fr: 'FR',
-        lang_ar: 'AR',
-        hero_title: 'Développeur Backend & Solveur de Problèmes',
-        hero_subtitle: 'Spécialisé en Odoo, Django et Flask | Expertise Backend Python',
-        hero_description: 'Je développe des solutions backend scalables et j\'intègre des processus métier complexes. Des modules Odoo personnalisés aux API REST – je concrétise votre idée.',
-        cta_contact: 'Commencer Votre Projet',
-        section_skills: 'Compétences',
-        skill_odoo: 'Odoo ERP',
-        skill_odoo_desc: 'Modules Personnalisés, Workflows, Configuration Multi-Entreprise, Optimisation PostgreSQL',
-        skill_django: 'Django & REST',
-        skill_django_desc: 'API REST, ORM, Authentification, Files d\'Attente Celery',
-        skill_flask: 'Flask & FastAPI',
-        skill_flask_desc: 'API Légères, Microservices, Fonctionnalités Temps Réel',
-        skill_db: 'Conception de Base de Données',
-        skill_db_desc: 'PostgreSQL, Indexation, Optimisation des Requêtes, Stratégies de Migration',
-        skill_integration: 'Intégrations',
-        skill_integration_desc: 'API de Paiement, Services Externes, Webhooks, Synchronisation de Données',
-        skill_devops: 'DevOps & Déploiement',
-        skill_devops_desc: 'Docker, CI/CD, Serveurs Production, Workflows Git',
-        section_services: 'Services',
-        service_odoo: 'Développement Odoo',
-        service_odoo_desc: 'Modules Personnalisés, Automatisation des Workflows, Intégration aux Systèmes Existants',
-        service_django: 'Django & API REST',
-        service_django_desc: 'Systèmes Backend Sécurisés, API Scalables, Conception de Bases de Données',
-        service_ai: 'Ingénierie IA et Chatbot',
-        service_ai_desc: 'Chatbots Alimentés par l\'IA, Intégration LLM, Automatisation du Machine Learning',
-        service_consulting: 'Conseil Technique',
-        service_consulting_desc: 'Révision d\'Architecture, Optimisation des Performances, Stratégie DevOps',
-        service_integration: 'Intégration Système',
-        service_integration_desc: 'Connecter les API Externes, Synchroniser les Données, Automatiser les Workflows',
-        service_mobile: 'Backend Mobile',
-        service_mobile_desc: 'API pour iOS/Android, Fonctionnalités Temps Réel, Notifications Push',
-        service_duration_short: 'à partir de 2 semaines',
-        service_duration_medium: 'à partir de 4 semaines',
-        service_duration_flexible: 'Flexible',
-        section_projects: 'Projets',
-        link_github: 'GitHub →',
-        section_contact: 'Travaillons Ensemble',
-        contact_desc: 'Envoyez-moi un message court et je vous répondrai dans les 24 heures.',
-        form_name: 'Nom',
-        form_email: 'Email',
-        form_phone: 'Téléphone (optionnel)',
-        form_service: 'Type de Service',
-        form_budget: 'Budget',
-        form_message: 'Message',
-        btn_send: 'Envoyer le Message',
-    },
-    ar: {
-        lang_de: 'DE',
-        lang_en: 'EN',
-        lang_fr: 'FR',
-        lang_ar: 'AR',
-        hero_title: 'مطور Backend وحل المشاكل',
-        hero_subtitle: 'متخصص في Odoo و Django و Flask | خبرة Python Backend',
-        hero_description: 'أطور حلول backend قابلة للتوسع وأدمج العمليات التجارية المعقدة. من وحدات Odoo المخصصة إلى REST APIs – أحول فكرتك إلى واقع.',
-        cta_contact: 'ابدأ مشروعك',
-        section_skills: 'المهارات',
-        skill_odoo: 'Odoo ERP',
-        skill_odoo_desc: 'وحدات مخصصة، سير العمل، إعداد متعدد الشركات، تحسين PostgreSQL',
-        skill_django: 'Django & REST',
-        skill_django_desc: 'REST APIs، ORM، المصادقة، طوابير المهام Celery',
-        skill_flask: 'Flask & FastAPI',
-        skill_flask_desc: 'APIs خفيفة الوزن، الخدمات الدقيقة، الميزات في الوقت الفعلي',
-        skill_db: 'تصميم قاعدة البيانات',
-        skill_db_desc: 'PostgreSQL، الفهرسة، تحسين الاستعلامات، استراتيجيات الهجرة',
-        skill_integration: 'التكاملات',
-        skill_integration_desc: 'APIs الدفع، الخدمات الخارجية، Webhooks، مزامنة البيانات',
-        skill_devops: 'DevOps والنشر',
-        skill_devops_desc: 'Docker، CI/CD، خوادم الإنتاج، سير عمل Git',
-        section_services: 'الخدمات',
-        service_odoo: 'تطوير Odoo',
-        service_odoo_desc: 'وحدات مخصصة، أتمتة سير العمل، التكامل مع الأنظمة الموجودة',
-        service_django: 'Django و REST APIs',
-        service_django_desc: 'أنظمة Backend آمنة، APIs قابلة للتوسع، تصميم قاعدة البيانات',
-        service_ai: 'هندسة الذكاء الاصطناعي و Chatbot',
-        service_ai_desc: 'Chatbots مدعومة بالذكاء الاصطناعي، تكامل LLM، أتمتة Machine Learning',
-        service_consulting: 'الاستشارات التقنية',
-        service_consulting_desc: 'مراجعة البنية، تحسين الأداء، استراتيجية DevOps',
-        service_integration: 'تكامل النظام',
-        service_integration_desc: 'ربط APIs الخارجية، مزامنة البيانات، أتمتة سير العمل',
-        service_mobile: 'Mobile Backend',
-        service_mobile_desc: 'APIs لـ iOS/Android، الميزات في الوقت الفعلي، إخطارات Push',
-        service_duration_short: 'من أسبوعين',
-        service_duration_medium: 'من 4 أسابيع',
-        service_duration_flexible: 'مرن',
-        section_projects: 'المشاريع',
-        link_github: 'GitHub →',
-        section_contact: 'دعونا نعمل معا',
-        contact_desc: 'أرسل لي رسالة قصيرة وسأرد عليك في غضون 24 ساعة.',
-        form_name: 'الاسم',
-        form_email: 'البريد الإلكتروني',
-        form_phone: 'الهاتف (اختياري)',
-        form_service: 'نوع الخدمة',
-        form_budget: 'الميزانية',
-        form_message: 'الرسالة',
-        btn_send: 'إرسال الرسالة',
-    }
-};
+// CRITICAL FIX #1: Only initialize translations ONCE - check if it already exists
+if (!window.appTranslations) {
+    window.appTranslations = {
+        de: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'Backend Developer & Problem Solver',
+            hero_subtitle: 'Spezialisiert auf Odoo, Django und Flask | Python Backend Expertise',
+            hero_description: 'Ich entwickle skalierbare Backend-Lösungen und integriere komplexe Business-Prozesse. Von Custom Odoo-Modulen bis zu REST APIs – ich mache deine Idee zur Realität.',
+            cta_contact: 'Jetzt Projekt starten',
+            section_skills: 'Fähigkeiten',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'Custom Module, Workflows, Multi-Company Setup, PostgreSQL Optimization',
+            skill_django: 'Django & REST',
+            skill_django_desc: 'REST APIs, ORM, Authentifizierung, Celery Task Queues',
+            skill_flask: 'Flask & FastAPI',
+            skill_flask_desc: 'Lightweight APIs, Microservices, Real-time Features',
+            skill_db: 'Database Design',
+            skill_db_desc: 'PostgreSQL, Indexing, Query Optimization, Migration Strategies',
+            skill_integration: 'Integrations',
+            skill_integration_desc: 'Payment APIs, External Services, Webhooks, Data Sync',
+            skill_devops: 'DevOps & Deployment',
+            skill_devops_desc: 'Docker, CI/CD, Production Servers, Git Workflows',
+            section_services: 'Dienstleistungen',
+            service_odoo: 'Odoo Development',
+            service_odoo_desc: 'Custom Modules, Workflow Automation, Integration mit bestehenden Systemen',
+            service_django: 'Django & REST APIs',
+            service_django_desc: 'Sichere Backend-Systeme, Skalierbare APIs, Database Design',
+            service_ai: 'AI & Chatbot Engineering',
+            service_ai_desc: 'KI-gesteuerte Chatbots, LLM Integration, Automation mit Machine Learning',
+            service_consulting: 'Technical Consulting',
+            service_consulting_desc: 'Architecture Review, Performance Optimization, DevOps Strategy',
+            service_integration: 'System Integration',
+            service_integration_desc: 'Externe APIs verbinden, Daten synchronisieren, Workflows automatisieren',
+            service_mobile: 'Mobile Backend',
+            service_mobile_desc: 'APIs für iOS/Android, Real-time Features, Push Notifications',
+            service_duration_short: 'ab 2 Wochen',
+            service_duration_medium: 'ab 4 Wochen',
+            service_duration_flexible: 'Flexible',
+            section_projects: 'Projekte',
+            link_github: 'GitHub →',
+            section_contact: 'Lass uns zusammenarbeiten',
+            contact_desc: 'Schreib mir eine kurze Nachricht und ich melde mich innerhalb von 24 Stunden.',
+            form_name: 'Name',
+            form_email: 'Email',
+            form_phone: 'Telefon (optional)',
+            form_service: 'Service-Typ',
+            form_budget: 'Budget',
+            form_message: 'Nachricht',
+            btn_send: 'Nachricht senden',
+        },
+        en: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'Backend Developer & Problem Solver',
+            hero_subtitle: 'Specialized in Odoo, Django, and Flask | Python Backend Expertise',
+            hero_description: 'I develop scalable backend solutions and integrate complex business processes. From custom Odoo modules to REST APIs – I turn your ideas into reality.',
+            cta_contact: 'Start Your Project Now',
+            section_skills: 'Skills',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'Custom Modules, Workflows, Multi-Company Setup, PostgreSQL Optimization',
+            skill_django: 'Django & REST',
+            skill_django_desc: 'REST APIs, ORM, Authentication, Celery Task Queues',
+            skill_flask: 'Flask & FastAPI',
+            skill_flask_desc: 'Lightweight APIs, Microservices, Real-time Features',
+            skill_db: 'Database Design',
+            skill_db_desc: 'PostgreSQL, Indexing, Query Optimization, Migration Strategies',
+            skill_integration: 'Integrations',
+            skill_integration_desc: 'Payment APIs, External Services, Webhooks, Data Sync',
+            skill_devops: 'DevOps & Deployment',
+            skill_devops_desc: 'Docker, CI/CD, Production Servers, Git Workflows',
+            section_services: 'Services',
+            service_odoo: 'Odoo Development',
+            service_odoo_desc: 'Custom Modules, Workflow Automation, Integration with Existing Systems',
+            service_django: 'Django & REST APIs',
+            service_django_desc: 'Secure Backend Systems, Scalable APIs, Database Design',
+            service_ai: 'AI & Chatbot Engineering',
+            service_ai_desc: 'AI-powered Chatbots, LLM Integration, Automation with Machine Learning',
+            service_consulting: 'Technical Consulting',
+            service_consulting_desc: 'Architecture Review, Performance Optimization, DevOps Strategy',
+            service_integration: 'System Integration',
+            service_integration_desc: 'Connect External APIs, Data Synchronization, Workflow Automation',
+            service_mobile: 'Mobile Backend',
+            service_mobile_desc: 'APIs for iOS/Android, Real-time Features, Push Notifications',
+            service_duration_short: 'from 2 weeks',
+            service_duration_medium: 'from 4 weeks',
+            service_duration_flexible: 'Flexible',
+            section_projects: 'Projects',
+            link_github: 'GitHub →',
+            section_contact: 'Let\'s Collaborate',
+            contact_desc: 'Write me a short message and I\'ll respond within 24 hours.',
+            form_name: 'Name',
+            form_email: 'Email',
+            form_phone: 'Phone (optional)',
+            form_service: 'Service Type',
+            form_budget: 'Budget',
+            form_message: 'Message',
+            btn_send: 'Send Message',
+        },
+        fr: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'Développeur Backend & Résolveur de Problèmes',
+            hero_subtitle: 'Spécialisé en Odoo, Django et Flask | Expertise Backend Python',
+            hero_description: 'Je développe des solutions backend évolutives et intègre des processus métier complexes. Des modules Odoo personnalisés aux API REST – je concrétise vos idées.',
+            cta_contact: 'Démarrez Votre Projet',
+            section_skills: 'Compétences',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'Modules Personnalisés, Workflows, Configuration Multi-Entreprise, Optimisation PostgreSQL',
+            skill_django: 'Django & REST',
+            skill_django_desc: 'API REST, ORM, Authentification, Files d\'Attente Celery',
+            skill_flask: 'Flask & FastAPI',
+            skill_flask_desc: 'API Légère, Microservices, Fonctionnalités en Temps Réel',
+            skill_db: 'Conception de Base de Données',
+            skill_db_desc: 'PostgreSQL, Indexation, Optimisation des Requêtes, Stratégies de Migration',
+            skill_integration: 'Intégrations',
+            skill_integration_desc: 'API de Paiement, Services Externes, Webhooks, Synchronisation de Données',
+            skill_devops: 'DevOps & Déploiement',
+            skill_devops_desc: 'Docker, CI/CD, Serveurs de Production, Workflows Git',
+            section_services: 'Services',
+            service_odoo: 'Développement Odoo',
+            service_odoo_desc: 'Modules Personnalisés, Automatisation de Workflows, Intégration avec Systèmes Existants',
+            service_django: 'Django & API REST',
+            service_django_desc: 'Systèmes Backend Sécurisés, API Évolutive, Conception de Base de Données',
+            service_ai: 'Ingénierie IA et Chatbot',
+            service_ai_desc: 'Chatbots Alimentés par l\'IA, Intégration LLM, Automatisation avec Machine Learning',
+            service_consulting: 'Conseil Technique',
+            service_consulting_desc: 'Examen de l\'Architecture, Optimisation des Performances, Stratégie DevOps',
+            service_integration: 'Intégration Système',
+            service_integration_desc: 'Connecter les API Externes, Synchronisation des Données, Automatisation des Workflows',
+            service_mobile: 'Backend Mobile',
+            service_mobile_desc: 'API pour iOS/Android, Fonctionnalités en Temps Réel, Notifications Push',
+            service_duration_short: 'à partir de 2 semaines',
+            service_duration_medium: 'à partir de 4 semaines',
+            service_duration_flexible: 'Flexible',
+            section_projects: 'Projets',
+            link_github: 'GitHub →',
+            section_contact: 'Collaborons Ensemble',
+            contact_desc: 'Écrivez-moi un message court et je vous répondrai dans les 24 heures.',
+            form_name: 'Nom',
+            form_email: 'Email',
+            form_phone: 'Téléphone (optionnel)',
+            form_service: 'Type de Service',
+            form_budget: 'Budget',
+            form_message: 'Message',
+            btn_send: 'Envoyer le Message',
+        },
+        ar: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'مطور Backend وحل المشاكل',
+            hero_subtitle: 'متخصص في Odoo و Django و Flask | خبرة Python Backend',
+            hero_description: 'أطور حلول backend قابلة للتوسع وأدمج العمليات التجارية المعقدة. من وحدات Odoo المخصصة إلى واجهات REST API – أحول أفكارك إلى واقع.',
+            cta_contact: 'ابدأ مشروعك الآن',
+            section_skills: 'المهارات',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'وحدات مخصصة، سير عمل، إعداد متعدد الشركات، تحسين PostgreSQL',
+            skill_django: 'Django و REST',
+            skill_django_desc: 'واجهات REST API، ORM، المصادقة، رفوف مهام Celery',
+            skill_flask: 'Flask و FastAPI',
+            skill_flask_desc: 'واجهات برمجية خفيفة الوزن، الخدمات الدقيقة، ميزات في الوقت الفعلي',
+            skill_db: 'تصميم قواعد البيانات',
+            skill_db_desc: 'PostgreSQL، الفهرسة، تحسين الاستعلامات، استراتيجيات الهجرة',
+            skill_integration: 'التكاملات',
+            skill_integration_desc: 'واجهات API الدفع، الخدمات الخارجية، Webhooks، مزامنة البيانات',
+            skill_devops: 'DevOps والنشر',
+            skill_devops_desc: 'Docker، CI/CD، خوادم الإنتاج، سير عمل Git',
+            section_services: 'الخدمات',
+            service_odoo: 'تطوير Odoo',
+            service_odoo_desc: 'وحدات مخصصة، أتمتة سير العمل، التكامل مع الأنظمة الموجودة',
+            service_django: 'Django وواجهات REST API',
+            service_django_desc: 'أنظمة Backend آمنة، واجهات برمجية قابلة للتوسع، تصميم قاعدة البيانات',
+            service_ai: 'هندسة الذكاء الاصطناعي والدردشة الآلية',
+            service_ai_desc: 'روبوتات دردشة تعمل بالذكاء الاصطناعي، تكامل LLM، الأتمتة مع التعلم الآلي',
+            service_consulting: 'الاستشارات التقنية',
+            service_consulting_desc: 'مراجعة العمارة، تحسين الأداء، استراتيجية DevOps',
+            service_integration: 'تكامل النظام',
+            service_integration_desc: 'ربط واجهات API الخارجية، مزامنة البيانات، أتمتة سير العمل',
+            service_mobile: 'Mobile Backend',
+            service_mobile_desc: 'واجهات برمجية لـ iOS/Android، ميزات في الوقت الفعلي، إشعارات فورية',
+            service_duration_short: 'من أسبوعين',
+            service_duration_medium: 'من 4 أسابيع',
+            service_duration_flexible: 'مرن',
+            section_projects: 'المشاريع',
+            link_github: 'GitHub →',
+            section_contact: 'دعنا نتعاون معاً',
+            contact_desc: 'اكتب لي رسالة قصيرة وسأرد عليك خلال 24 ساعة.',
+            form_name: 'الاسم',
+            form_email: 'البريد الإلكتروني',
+            form_phone: 'الهاتف (اختياري)',
+            form_service: 'نوع الخدمة',
+            form_budget: 'الميزانية',
+            form_message: 'الرسالة',
+            btn_send: 'إرسال الرسالة',
+        }
+    };
+}
+
+// Reference for shorter code
+const translations = window.appTranslations;
 
 // Change Language Function - FIXED (works with and without event)
 function changeLanguage(lang, event) {

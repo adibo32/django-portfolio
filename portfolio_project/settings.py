@@ -81,22 +81,22 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Email Configuration
-# Email Configuration (Resend)
+# ==========================================
+# EMAIL CONFIGURATION (RESEND)
+# ==========================================
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.resend.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'resend'  # Immer 'resend' bei Resend
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Dein API Key
-DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'  # Oder deine verifizierte Domain
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Dein Resend API Key
+DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'  # Oder deine verifizierte Domain später
 ADMIN_EMAIL = config('ADMIN_EMAIL', default='tadib24@gmail.com')
-EMAIL_TIMEOUT = 5
+# ⚠️ WICHTIG: EMAIL_TIMEOUT entfernt! Django nutzt automatisch einen guten Default (sonst timed out die Email bei Resend)
 
-# Admin Email
-ADMIN_EMAIL = config('ADMIN_EMAIL', default='deine@email.com')
-
-# Security (Production)
+# ==========================================
+# SECURITY (Production)
+# ==========================================
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
