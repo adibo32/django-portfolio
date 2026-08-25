@@ -1,9 +1,9 @@
 {
-  "framework": null,
-  "builds": [
-    { "src": "index.html", "use": "@vercel/static" }
-  ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/index.html" }
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "destination": "https://adib-tajouri.onrender.com/$1",
+      "permanent": false
+    }
   ]
 }
