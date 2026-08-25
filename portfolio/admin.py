@@ -1,5 +1,14 @@
 from django.contrib import admin
-from .models import ContactMessage
+from .models import ContactMessage, EmailLog
+
+
+@admin.register(EmailLog)
+class EmailLogAdmin(admin.ModelAdmin):
+    list_display = ('recipient', 'status', 'subject', 'created_at')
+    list_filter = ('status', 'created_at')
+    search_fields = ('recipient', 'subject', 'error_message')
+    readonly_fields = ('created_at', 'error_message')
+    ordering = ('-created_at',)
 
 
 @admin.register(ContactMessage)

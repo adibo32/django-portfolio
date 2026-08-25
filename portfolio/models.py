@@ -1,6 +1,28 @@
 from django.db import models
 from django.core.mail import EmailMessage
 from django.conf import settings
+from django.utils import timezone
+
+class EmailLog(models.Model):
+    """Logging von Email-Versand-Versuchen"""
+    STATUS_CHOICES = (
+        ('sent', 'Versendet'),
+        ('failed', 'Fehlgeschlagen'),
+    )
+
+    recipient = models.EmailField()
+    subject = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    error_message = models.TextField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name_plural = "Email Logs"
+
+    def __str__(self):
+        return f"{self.recipient} - {self.get_status_display()}"
+
 
 class ContactMessage(models.Model):
     SERVICE_CHOICES = (
@@ -68,5 +90,19 @@ Portal: https://adib-dev.com/admin
                 to=[settings.ADMIN_EMAIL],
             )
             email.send(fail_silently=False)
+
+            # Log success
+            EmailLog.objects.create(
+                recipient=settings.ADMIN_EMAIL,
+                subject=subject,
+                status='sent'
+            )
         except Exception as e:
+            # Log error aber nicht crashen
+            EmailLog.objects.create(
+                recipient=settings.ADMIN_EMAIL,
+                subject=subject,
+                status='failed',
+                error_message=str(e)
+            )
             print(f"Email error: {e}")

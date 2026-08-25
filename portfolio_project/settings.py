@@ -88,11 +88,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.resend.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'resend'  # Immer 'resend' bei Resend
-EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')  # Dein Resend API Key
-DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'  # Oder deine verifizierte Domain später
+EMAIL_HOST_USER = 'resend'
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'
 ADMIN_EMAIL = config('ADMIN_EMAIL', default='tadib24@gmail.com')
-# ⚠️ WICHTIG: EMAIL_TIMEOUT entfernt! Django nutzt automatisch einen guten Default (sonst timed out die Email bei Resend)
+EMAIL_TIMEOUT = 30
 
 # ==========================================
 # SECURITY (Production)
