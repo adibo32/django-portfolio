@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.views.decorators.http import require_http_methods
-from django.views.decorators.csrf import csrf_exempt
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.conf import settings
-import json
 
 from .models import ContactMessage
 from .forms import ContactForm

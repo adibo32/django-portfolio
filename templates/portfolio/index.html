@@ -653,17 +653,23 @@ const translations = {
     }
 };
 
-// Change Language Function - FIXED
-function changeLanguage(lang) {
+// Change Language Function - FIXED (works with and without event)
+function changeLanguage(lang, event) {
     document.documentElement.lang = lang;
     document.body.setAttribute('data-lang', lang);
     localStorage.setItem('language', lang);
 
-    // Update active button
+    // Update active button - find by data attribute
     document.querySelectorAll('.lang-btn').forEach(btn => {
         btn.classList.remove('active');
     });
-    event.target.classList.add('active');
+
+    // If called from onclick with event, use that; otherwise find the button
+    if (event && event.target) {
+        event.target.classList.add('active');
+    } else {
+        document.querySelector(`button[onclick*="'${lang}'"]`)?.classList.add('active');
+    }
 
     // Update all translatable elements
     document.querySelectorAll('[data-i18n]').forEach(el => {

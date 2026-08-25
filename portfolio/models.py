@@ -1,5 +1,5 @@
 from django.db import models
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 from django.conf import settings
 
 class ContactMessage(models.Model):
@@ -61,12 +61,12 @@ Portal: https://adib-dev.com/admin
         """
 
         try:
-            send_mail(
-                subject,
-                message,
-                settings.DEFAULT_FROM_EMAIL,
-                [settings.ADMIN_EMAIL],
-                fail_silently=False,
+            email = EmailMessage(
+                subject=subject,
+                body=message,
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                to=[settings.ADMIN_EMAIL],
             )
+            email.send(timeout=5, fail_silently=False)  # ← MIT TIMEOUT!
         except Exception as e:
             print(f"Email error: {e}")
