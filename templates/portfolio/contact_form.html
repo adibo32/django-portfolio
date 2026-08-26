@@ -1,0 +1,52 @@
+{% load static %}
+
+<form hx-post="{% url 'portfolio:submit_contact_form' %}"
+      hx-target="#contact-form-container"
+      hx-swap="outerHTML"
+      class="card p-8">
+    {% csrf_token %}
+
+    <div class="mb-6">
+        <label class="block text-sm font-bold mb-2" for="{{ form.name.id_for_label }}" data-i18n="form_name">Name</label>
+        {{ form.name }}
+        {% if form.name.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.name.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-6">
+        <label class="block text-sm font-bold mb-2" for="{{ form.email.id_for_label }}" data-i18n="form_email">Email</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-6">
+        <label class="block text-sm font-bold mb-2" for="{{ form.phone.id_for_label }}" data-i18n="form_phone">Telefon (optional)</label>
+        {{ form.phone }}
+    </div>
+
+    <div class="mb-6">
+        <label class="block text-sm font-bold mb-2" for="{{ form.service_type.id_for_label }}" data-i18n="form_service">Service-Typ</label>
+        {{ form.service_type }}
+        {% if form.service_type.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.service_type.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="mb-6">
+        <label class="block text-sm font-bold mb-2" for="{{ form.budget.id_for_label }}" data-i18n="form_budget">Budget</label>
+        {{ form.budget }}
+    </div>
+
+    <div class="mb-8">
+        <label class="block text-sm font-bold mb-2" for="{{ form.message.id_for_label }}" data-i18n="form_message">Nachricht</label>
+        {{ form.message }}
+        {% if form.message.errors %}
+            <div class="text-red-400 text-sm mt-1">{{ form.message.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <button type="submit" class="btn-primary w-full" data-i18n="btn_send">Nachricht senden</button>
+</form>

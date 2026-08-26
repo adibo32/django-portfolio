@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Dependencies
 node_modules/
 venv/
@@ -9,11 +10,52 @@ backend/venv/
 .next/
 out/
 build/
+=======
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+>>>>>>> be0f7d0265c9bf43cfe2cd0238085b688510a252
 
 # Environment variables
 .env
 .env.local
 .env.*.local
+<<<<<<< HEAD
 .env.development.local
 .env.test.local
 .env.production.local
@@ -35,6 +77,8 @@ db.sqlite3
 .Trashes
 ehthumbs.db
 Thumbs.db
+=======
+>>>>>>> be0f7d0265c9bf43cfe2cd0238085b688510a252
 
 # IDE
 .vscode/
@@ -42,8 +86,22 @@ Thumbs.db
 *.swp
 *.swo
 *~
+<<<<<<< HEAD
 
 # Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+=======
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Testing
+.coverage
+htmlcov/
+
+# Static files during development
+/static
+>>>>>>> be0f7d0265c9bf43cfe2cd0238085b688510a252

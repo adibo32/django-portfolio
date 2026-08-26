@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adib - Backend Developer | Odoo, Django, Flask</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --color-primary: #10b981;
+            --color-secondary: #1e293b;
+            --color-tertiary: #0f172a;
+        }
+
+        html[data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --border-color: #334155;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            overflow-x: hidden;
+        }
+
+        body[data-lang="ar"] {
+            direction: rtl;
+            text-align: right;
+        }
+
+        body[data-lang="ar"] .ltr {
+            direction: ltr;
+            text-align: left;
+        }
+
+        .gradient-text {
+            background: linear-gradient(135deg, #10b981 0%, #06b6d4 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(6, 182, 212, 0.1) 100%);
+        }
+
+        .smooth-scroll {
+            scroll-behavior: smooth;
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: var(--color-primary);
+            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.1);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .fade-in {
+            animation: fadeIn 0.8s ease-in-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .slide-in {
+            animation: slideIn 0.8s ease-in-out forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .sticky-header {
+            position: sticky;
+            top: 0;
+            background: rgba(15, 23, 42, 0.95);
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .language-switch {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .lang-btn {
+            padding: 0.4rem 0.8rem;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--color-primary);
+            color: var(--text-primary);
+        }
+
+        .lang-btn.active {
+            background: var(--color-primary);
+            color: white;
+            border-color: var(--color-primary);
+        }
+
+        .skill-grid,
+        .service-grid,
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        /* Form Styling */
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        select,
+        textarea {
+            width: 100%;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            color: white;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-in-out;
+            max-width: 400px;
+            z-index: 1000;
+        }
+
+        .toast.success {
+            background: rgba(16, 185, 129, 0.9);
+        }
+
+        .toast.error {
+            background: rgba(239, 68, 68, 0.9);
+        }
+    </style>
+</head>
+<body class="smooth-scroll" data-lang="de">
+
+<!-- Navigation -->
+<nav class="sticky-header">
+    <div class="container mx-auto px-4 py-4">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl font-bold gradient-text">Adib Dev</h1>
+            <div class="language-switch">
+                <button class="lang-btn active" onclick="changeLanguage('de', event)" data-i18n="lang_de">DE</button>
+                <button class="lang-btn" onclick="changeLanguage('en', event)" data-i18n="lang_en">EN</button>
+                <button class="lang-btn" onclick="changeLanguage('fr', event)" data-i18n="lang_fr">FR</button>
+                <button class="lang-btn" onclick="changeLanguage('ar', event)" data-i18n="lang_ar">AR</button>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="relative py-32 overflow-hidden">
+    <div class="absolute inset-0 gradient-bg"></div>
+    <div class="container mx-auto px-4 relative z-10">
+        <div class="max-w-3xl fade-in" style="animation-delay: 0s">
+            <h2 class="text-5xl md:text-6xl font-bold mb-6 gradient-text" data-i18n="hero_title">
+                Backend Developer & Problem Solver
+            </h2>
+            <p class="text-xl text-gray-300 mb-8" data-i18n="hero_subtitle">
+                Spezialisiert auf Odoo, Django und Flask | Python Backend Expertise
+            </p>
+            <p class="text-lg text-gray-400 mb-8" data-i18n="hero_description">
+                Ich entwickle skalierbare Backend-Lösungen und integriere komplexe Business-Prozesse. Von Custom Odoo-Modulen bis zu REST APIs – ich mache deine Idee zur Realität.
+            </p>
+            <a href="#contact" class="btn-primary inline-block" data-i18n="cta_contact">Jetzt Projekt starten</a>
+        </div>
+    </div>
+</section>
+
+<!-- Skills Section -->
+<section id="skills" class="py-20 border-t border-gray-800">
+    <div class="container mx-auto px-4">
+        <h3 class="text-4xl font-bold mb-12 gradient-text" data-i18n="section_skills">Fähigkeiten</h3>
+        <div class="skill-grid">
+            <div class="card p-6 slide-in" style="animation-delay: 0.1s">
+                <h4 class="text-xl font-bold mb-3" data-i18n="skill_odoo">Odoo ERP</h4>
+                <p class="text-gray-400" data-i18n="skill_odoo_desc">Custom Module, Workflows, Multi-Company Setup, PostgreSQL Optimization</p>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.2s">
+                <h4 class="text-xl font-bold mb-3" data-i18n="skill_django">Django & REST</h4>
+                <p class="text-gray-400" data-i18n="skill_django_desc">REST APIs, ORM, Authentifizierung, Celery Task Queues</p>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.3s">
+                <h4 class="text-xl font-bold mb-3" data-i18n="skill_flask">Flask & FastAPI</h4>
+                <p class="text-gray-400" data-i18n="skill_flask_desc">Lightweight APIs, Microservices, Real-time Features</p>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.4s">
+                <h4 class="text-xl font-bold mb-3" data-i18n="skill_db">Database Design</h4>
+                <p class="text-gray-400" data-i18n="skill_db_desc">PostgreSQL, Indexing, Query Optimization, Migration Strategies</p>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.5s">
+                <h4 class="text-xl font-bold mb-3" data-i18n="skill_integration">Integrations</h4>
+                <p class="text-gray-400" data-i18n="skill_integration_desc">Payment APIs, External Services, Webhooks, Data Sync</p>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.6s">
+                <h4 class="text-xl font-bold mb-3" data-i18n="skill_devops">DevOps & Deployment</h4>
+                <p class="text-gray-400" data-i18n="skill_devops_desc">Docker, CI/CD, Production Servers, Git Workflows</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section -->
+<section id="services" class="py-20 border-t border-gray-800">
+    <div class="container mx-auto px-4">
+        <h3 class="text-4xl font-bold mb-12 gradient-text" data-i18n="section_services">Dienstleistungen</h3>
+        <div class="service-grid">
+            <div class="card p-8 slide-in" style="animation-delay: 0.1s">
+                <div class="text-4xl mb-4">🏢</div>
+                <h4 class="text-2xl font-bold mb-3" data-i18n="service_odoo">Odoo Development</h4>
+                <p class="text-gray-400 mb-4" data-i18n="service_odoo_desc">Custom Modules, Workflow Automation, Integration mit bestehenden Systemen</p>
+                <div class="text-sm text-emerald-500" data-i18n="service_duration_short">ab 2 Wochen</div>
+            </div>
+            <div class="card p-8 slide-in" style="animation-delay: 0.2s">
+                <div class="text-4xl mb-4">⚙️</div>
+                <h4 class="text-2xl font-bold mb-3" data-i18n="service_django">Django & REST APIs</h4>
+                <p class="text-gray-400 mb-4" data-i18n="service_django_desc">Sichere Backend-Systeme, Skalierbare APIs, Database Design</p>
+                <div class="text-sm text-emerald-500" data-i18n="service_duration_medium">ab 4 Wochen</div>
+            </div>
+            <div class="card p-8 slide-in" style="animation-delay: 0.3s">
+                <div class="text-4xl mb-4">🤖</div>
+                <h4 class="text-2xl font-bold mb-3" data-i18n="service_ai">AI & Chatbot Engineering</h4>
+                <p class="text-gray-400 mb-4" data-i18n="service_ai_desc">KI-gesteuerte Chatbots, LLM Integration, Automation mit Machine Learning</p>
+                <div class="text-sm text-emerald-500" data-i18n="service_duration_medium">ab 4 Wochen</div>
+            </div>
+            <div class="card p-8 slide-in" style="animation-delay: 0.4s">
+                <div class="text-4xl mb-4">🔧</div>
+                <h4 class="text-2xl font-bold mb-3" data-i18n="service_consulting">Technical Consulting</h4>
+                <p class="text-gray-400 mb-4" data-i18n="service_consulting_desc">Architecture Review, Performance Optimization, DevOps Strategy</p>
+                <div class="text-sm text-emerald-500" data-i18n="service_duration_flexible">Flexible</div>
+            </div>
+            <div class="card p-8 slide-in" style="animation-delay: 0.5s">
+                <div class="text-4xl mb-4">🔌</div>
+                <h4 class="text-2xl font-bold mb-3" data-i18n="service_integration">System Integration</h4>
+                <p class="text-gray-400 mb-4" data-i18n="service_integration_desc">Externe APIs verbinden, Daten synchronisieren, Workflows automatisieren</p>
+                <div class="text-sm text-emerald-500" data-i18n="service_duration_short">ab 2 Wochen</div>
+            </div>
+            <div class="card p-8 slide-in" style="animation-delay: 0.6s">
+                <div class="text-4xl mb-4">📱</div>
+                <h4 class="text-2xl font-bold mb-3" data-i18n="service_mobile">Mobile Backend</h4>
+                <p class="text-gray-400 mb-4" data-i18n="service_mobile_desc">APIs für iOS/Android, Real-time Features, Push Notifications</p>
+                <div class="text-sm text-emerald-500" data-i18n="service_duration_medium">ab 4 Wochen</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Projects Section -->
+<section id="projects" class="py-20 border-t border-gray-800">
+    <div class="container mx-auto px-4">
+        <h3 class="text-4xl font-bold mb-12 gradient-text" data-i18n="section_projects">Projekte</h3>
+        <div class="project-grid">
+            <div class="card p-6 slide-in" style="animation-delay: 0.1s">
+                <h4 class="text-xl font-bold mb-2">Odoo Construction ERP Module</h4>
+                <p class="text-gray-400 mb-4">Custom Odoo 16 Modul für Bauprojekt-Management. Multi-Company-fähig mit automatisierten Workflows.</p>
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">Odoo 16</span>
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">Python 3.12</span>
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">PostgreSQL</span>
+                </div>
+                <a href="https://github.com/adibo32/odoo-construction-Project" target="_blank" class="text-emerald-500 hover:text-emerald-400" data-i18n="link_github">GitHub →</a>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.2s">
+                <h4 class="text-xl font-bold mb-2">Django Reservation System</h4>
+                <p class="text-gray-400 mb-4">Vollständiges Django-basiertes Reservierungs-System mit Real-time Verfügbarkeitsprüfung.</p>
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">Django</span>
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">REST API</span>
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">Celery</span>
+                </div>
+                <a href="https://github.com/adibo32/reservation" target="_blank" class="text-emerald-500 hover:text-emerald-400" data-i18n="link_github">GitHub →</a>
+            </div>
+            <div class="card p-6 slide-in" style="animation-delay: 0.3s">
+                <h4 class="text-xl font-bold mb-2">Multilingual Translation System</h4>
+                <p class="text-gray-400 mb-4">Flask-basiertes Übersetzungs-Management-System mit automatisierter Lokalisierung.</p>
+                <div class="flex gap-2 mb-4 flex-wrap">
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">Flask</span>
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">API Integration</span>
+                    <span class="bg-emerald-500 bg-opacity-20 text-emerald-400 text-xs px-2 py-1 rounded">i18n</span>
+                </div>
+                <a href="https://github.com/adibo32/translate" target="_blank" class="text-emerald-500 hover:text-emerald-400" data-i18n="link_github">GitHub →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" class="py-20 border-t border-gray-800">
+    <div class="container mx-auto px-4 max-w-2xl">
+        <h3 class="text-4xl font-bold mb-4 gradient-text" data-i18n="section_contact">Lass uns zusammenarbeiten</h3>
+        <p class="text-gray-400 mb-12" data-i18n="contact_desc">Schreib mir eine kurze Nachricht und ich melde mich innerhalb von 24 Stunden.</p>
+
+        <div id="contact-form-container">
+            <form hx-post="{% url 'portfolio:submit_contact_form' %}"
+                  hx-target="#contact-form-container"
+                  hx-swap="outerHTML"
+                  class="card p-8">
+                {% csrf_token %}
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2" for="{{ form.name.id_for_label }}" data-i18n="form_name">Name</label>
+                    {{ form.name }}
+                    {% if form.name.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.name.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2" for="{{ form.email.id_for_label }}" data-i18n="form_email">Email</label>
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.email.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2" for="{{ form.phone.id_for_label }}" data-i18n="form_phone">Telefon (optional)</label>
+                    {{ form.phone }}
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2" for="{{ form.service_type.id_for_label }}" data-i18n="form_service">Service-Typ</label>
+                    {{ form.service_type }}
+                    {% if form.service_type.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.service_type.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-sm font-bold mb-2" for="{{ form.budget.id_for_label }}" data-i18n="form_budget">Budget</label>
+                    {{ form.budget }}
+                </div>
+
+                <div class="mb-8">
+                    <label class="block text-sm font-bold mb-2" for="{{ form.message.id_for_label }}" data-i18n="form_message">Nachricht</label>
+                    {{ form.message }}
+                    {% if form.message.errors %}
+                        <div class="text-red-400 text-sm mt-1">{{ form.message.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn-primary w-full" data-i18n="btn_send">Nachricht senden</button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Toast Notifications -->
+<div id="toast-container"></div>
+
+<script>
+// CRITICAL FIX #1: Only initialize translations ONCE - check if it already exists
+if (!window.appTranslations) {
+    window.appTranslations = {
+        de: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'Backend Developer & Problem Solver',
+            hero_subtitle: 'Spezialisiert auf Odoo, Django und Flask | Python Backend Expertise',
+            hero_description: 'Ich entwickle skalierbare Backend-Lösungen und integriere komplexe Business-Prozesse. Von Custom Odoo-Modulen bis zu REST APIs – ich mache deine Idee zur Realität.',
+            cta_contact: 'Jetzt Projekt starten',
+            section_skills: 'Fähigkeiten',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'Custom Module, Workflows, Multi-Company Setup, PostgreSQL Optimization',
+            skill_django: 'Django & REST',
+            skill_django_desc: 'REST APIs, ORM, Authentifizierung, Celery Task Queues',
+            skill_flask: 'Flask & FastAPI',
+            skill_flask_desc: 'Lightweight APIs, Microservices, Real-time Features',
+            skill_db: 'Database Design',
+            skill_db_desc: 'PostgreSQL, Indexing, Query Optimization, Migration Strategies',
+            skill_integration: 'Integrations',
+            skill_integration_desc: 'Payment APIs, External Services, Webhooks, Data Sync',
+            skill_devops: 'DevOps & Deployment',
+            skill_devops_desc: 'Docker, CI/CD, Production Servers, Git Workflows',
+            section_services: 'Dienstleistungen',
+            service_odoo: 'Odoo Development',
+            service_odoo_desc: 'Custom Modules, Workflow Automation, Integration mit bestehenden Systemen',
+            service_django: 'Django & REST APIs',
+            service_django_desc: 'Sichere Backend-Systeme, Skalierbare APIs, Database Design',
+            service_ai: 'AI & Chatbot Engineering',
+            service_ai_desc: 'KI-gesteuerte Chatbots, LLM Integration, Automation mit Machine Learning',
+            service_consulting: 'Technical Consulting',
+            service_consulting_desc: 'Architecture Review, Performance Optimization, DevOps Strategy',
+            service_integration: 'System Integration',
+            service_integration_desc: 'Externe APIs verbinden, Daten synchronisieren, Workflows automatisieren',
+            service_mobile: 'Mobile Backend',
+            service_mobile_desc: 'APIs für iOS/Android, Real-time Features, Push Notifications',
+            service_duration_short: 'ab 2 Wochen',
+            service_duration_medium: 'ab 4 Wochen',
+            service_duration_flexible: 'Flexible',
+            section_projects: 'Projekte',
+            link_github: 'GitHub →',
+            section_contact: 'Lass uns zusammenarbeiten',
+            contact_desc: 'Schreib mir eine kurze Nachricht und ich melde mich innerhalb von 24 Stunden.',
+            form_name: 'Name',
+            form_email: 'Email',
+            form_phone: 'Telefon (optional)',
+            form_service: 'Service-Typ',
+            form_budget: 'Budget',
+            form_message: 'Nachricht',
+            btn_send: 'Nachricht senden',
+        },
+        en: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'Backend Developer & Problem Solver',
+            hero_subtitle: 'Specialized in Odoo, Django, and Flask | Python Backend Expertise',
+            hero_description: 'I develop scalable backend solutions and integrate complex business processes. From custom Odoo modules to REST APIs – I turn your ideas into reality.',
+            cta_contact: 'Start Your Project Now',
+            section_skills: 'Skills',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'Custom Modules, Workflows, Multi-Company Setup, PostgreSQL Optimization',
+            skill_django: 'Django & REST',
+            skill_django_desc: 'REST APIs, ORM, Authentication, Celery Task Queues',
+            skill_flask: 'Flask & FastAPI',
+            skill_flask_desc: 'Lightweight APIs, Microservices, Real-time Features',
+            skill_db: 'Database Design',
+            skill_db_desc: 'PostgreSQL, Indexing, Query Optimization, Migration Strategies',
+            skill_integration: 'Integrations',
+            skill_integration_desc: 'Payment APIs, External Services, Webhooks, Data Sync',
+            skill_devops: 'DevOps & Deployment',
+            skill_devops_desc: 'Docker, CI/CD, Production Servers, Git Workflows',
+            section_services: 'Services',
+            service_odoo: 'Odoo Development',
+            service_odoo_desc: 'Custom Modules, Workflow Automation, Integration with Existing Systems',
+            service_django: 'Django & REST APIs',
+            service_django_desc: 'Secure Backend Systems, Scalable APIs, Database Design',
+            service_ai: 'AI & Chatbot Engineering',
+            service_ai_desc: 'AI-powered Chatbots, LLM Integration, Automation with Machine Learning',
+            service_consulting: 'Technical Consulting',
+            service_consulting_desc: 'Architecture Review, Performance Optimization, DevOps Strategy',
+            service_integration: 'System Integration',
+            service_integration_desc: 'Connect External APIs, Data Synchronization, Workflow Automation',
+            service_mobile: 'Mobile Backend',
+            service_mobile_desc: 'APIs for iOS/Android, Real-time Features, Push Notifications',
+            service_duration_short: 'from 2 weeks',
+            service_duration_medium: 'from 4 weeks',
+            service_duration_flexible: 'Flexible',
+            section_projects: 'Projects',
+            link_github: 'GitHub →',
+            section_contact: 'Let\'s Collaborate',
+            contact_desc: 'Write me a short message and I\'ll respond within 24 hours.',
+            form_name: 'Name',
+            form_email: 'Email',
+            form_phone: 'Phone (optional)',
+            form_service: 'Service Type',
+            form_budget: 'Budget',
+            form_message: 'Message',
+            btn_send: 'Send Message',
+        },
+        fr: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'Développeur Backend & Résolveur de Problèmes',
+            hero_subtitle: 'Spécialisé en Odoo, Django et Flask | Expertise Backend Python',
+            hero_description: 'Je développe des solutions backend évolutives et intègre des processus métier complexes. Des modules Odoo personnalisés aux API REST – je concrétise vos idées.',
+            cta_contact: 'Démarrez Votre Projet',
+            section_skills: 'Compétences',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'Modules Personnalisés, Workflows, Configuration Multi-Entreprise, Optimisation PostgreSQL',
+            skill_django: 'Django & REST',
+            skill_django_desc: 'API REST, ORM, Authentification, Files d\'Attente Celery',
+            skill_flask: 'Flask & FastAPI',
+            skill_flask_desc: 'API Légère, Microservices, Fonctionnalités en Temps Réel',
+            skill_db: 'Conception de Base de Données',
+            skill_db_desc: 'PostgreSQL, Indexation, Optimisation des Requêtes, Stratégies de Migration',
+            skill_integration: 'Intégrations',
+            skill_integration_desc: 'API de Paiement, Services Externes, Webhooks, Synchronisation de Données',
+            skill_devops: 'DevOps & Déploiement',
+            skill_devops_desc: 'Docker, CI/CD, Serveurs de Production, Workflows Git',
+            section_services: 'Services',
+            service_odoo: 'Développement Odoo',
+            service_odoo_desc: 'Modules Personnalisés, Automatisation de Workflows, Intégration avec Systèmes Existants',
+            service_django: 'Django & API REST',
+            service_django_desc: 'Systèmes Backend Sécurisés, API Évolutive, Conception de Base de Données',
+            service_ai: 'Ingénierie IA et Chatbot',
+            service_ai_desc: 'Chatbots Alimentés par l\'IA, Intégration LLM, Automatisation avec Machine Learning',
+            service_consulting: 'Conseil Technique',
+            service_consulting_desc: 'Examen de l\'Architecture, Optimisation des Performances, Stratégie DevOps',
+            service_integration: 'Intégration Système',
+            service_integration_desc: 'Connecter les API Externes, Synchronisation des Données, Automatisation des Workflows',
+            service_mobile: 'Backend Mobile',
+            service_mobile_desc: 'API pour iOS/Android, Fonctionnalités en Temps Réel, Notifications Push',
+            service_duration_short: 'à partir de 2 semaines',
+            service_duration_medium: 'à partir de 4 semaines',
+            service_duration_flexible: 'Flexible',
+            section_projects: 'Projets',
+            link_github: 'GitHub →',
+            section_contact: 'Collaborons Ensemble',
+            contact_desc: 'Écrivez-moi un message court et je vous répondrai dans les 24 heures.',
+            form_name: 'Nom',
+            form_email: 'Email',
+            form_phone: 'Téléphone (optionnel)',
+            form_service: 'Type de Service',
+            form_budget: 'Budget',
+            form_message: 'Message',
+            btn_send: 'Envoyer le Message',
+        },
+        ar: {
+            lang_de: 'DE',
+            lang_en: 'EN',
+            lang_fr: 'FR',
+            lang_ar: 'AR',
+            hero_title: 'مطور Backend وحل المشاكل',
+            hero_subtitle: 'متخصص في Odoo و Django و Flask | خبرة Python Backend',
+            hero_description: 'أطور حلول backend قابلة للتوسع وأدمج العمليات التجارية المعقدة. من وحدات Odoo المخصصة إلى واجهات REST API – أحول أفكارك إلى واقع.',
+            cta_contact: 'ابدأ مشروعك الآن',
+            section_skills: 'المهارات',
+            skill_odoo: 'Odoo ERP',
+            skill_odoo_desc: 'وحدات مخصصة، سير عمل، إعداد متعدد الشركات، تحسين PostgreSQL',
+            skill_django: 'Django و REST',
+            skill_django_desc: 'واجهات REST API، ORM، المصادقة، رفوف مهام Celery',
+            skill_flask: 'Flask و FastAPI',
+            skill_flask_desc: 'واجهات برمجية خفيفة الوزن، الخدمات الدقيقة، ميزات في الوقت الفعلي',
+            skill_db: 'تصميم قواعد البيانات',
+            skill_db_desc: 'PostgreSQL، الفهرسة، تحسين الاستعلامات، استراتيجيات الهجرة',
+            skill_integration: 'التكاملات',
+            skill_integration_desc: 'واجهات API الدفع، الخدمات الخارجية، Webhooks، مزامنة البيانات',
+            skill_devops: 'DevOps والنشر',
+            skill_devops_desc: 'Docker، CI/CD، خوادم الإنتاج، سير عمل Git',
+            section_services: 'الخدمات',
+            service_odoo: 'تطوير Odoo',
+            service_odoo_desc: 'وحدات مخصصة، أتمتة سير العمل، التكامل مع الأنظمة الموجودة',
+            service_django: 'Django وواجهات REST API',
+            service_django_desc: 'أنظمة Backend آمنة، واجهات برمجية قابلة للتوسع، تصميم قاعدة البيانات',
+            service_ai: 'هندسة الذكاء الاصطناعي والدردشة الآلية',
+            service_ai_desc: 'روبوتات دردشة تعمل بالذكاء الاصطناعي، تكامل LLM، الأتمتة مع التعلم الآلي',
+            service_consulting: 'الاستشارات التقنية',
+            service_consulting_desc: 'مراجعة العمارة، تحسين الأداء، استراتيجية DevOps',
+            service_integration: 'تكامل النظام',
+            service_integration_desc: 'ربط واجهات API الخارجية، مزامنة البيانات، أتمتة سير العمل',
+            service_mobile: 'Mobile Backend',
+            service_mobile_desc: 'واجهات برمجية لـ iOS/Android، ميزات في الوقت الفعلي، إشعارات فورية',
+            service_duration_short: 'من أسبوعين',
+            service_duration_medium: 'من 4 أسابيع',
+            service_duration_flexible: 'مرن',
+            section_projects: 'المشاريع',
+            link_github: 'GitHub →',
+            section_contact: 'دعنا نتعاون معاً',
+            contact_desc: 'اكتب لي رسالة قصيرة وسأرد عليك خلال 24 ساعة.',
+            form_name: 'الاسم',
+            form_email: 'البريد الإلكتروني',
+            form_phone: 'الهاتف (اختياري)',
+            form_service: 'نوع الخدمة',
+            form_budget: 'الميزانية',
+            form_message: 'الرسالة',
+            btn_send: 'إرسال الرسالة',
+        }
+    };
+}
+
+// Reference for shorter code
+const translations = window.appTranslations;
+
+// Change Language Function - FIXED (works with and without event)
+function changeLanguage(lang, event) {
+    document.documentElement.lang = lang;
+    document.body.setAttribute('data-lang', lang);
+    localStorage.setItem('language', lang);
+
+    // Update active button - find by data attribute
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // If called from onclick with event, use that; otherwise find the button
+    if (event && event.target) {
+        event.target.classList.add('active');
+    } else {
+        document.querySelector(`button[onclick*="'${lang}'"]`)?.classList.add('active');
+    }
+
+    // Update all translatable elements
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang] && translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+}
+
+// Load saved language on page load
+window.addEventListener('DOMContentLoaded', () => {
+    const savedLang = localStorage.getItem('language') || 'de';
+    changeLanguage(savedLang);
+});
+
+// HTMX Event Listener for Form Submission
+document.addEventListener('htmx:afterRequest', function(event) {
+    if (event.detail.xhr.status === 200) {
+        const response = event.detail.xhr.response;
+        try {
+            const data = JSON.parse(response);
+            if (data.status === 'success') {
+                showToast('Danke für deine Anfrage! Ich melde mich schnellstmöglich.', 'success');
+                setTimeout(() => {
+                    document.getElementById('contact-form-container').innerHTML = '<div class="card p-8"><div class="text-center"><p class="text-lg text-emerald-400">Nachricht erhalten! 🎉</p><p class="text-gray-400 mt-2">Ich melde mich innerhalb von 24 Stunden.</p></div></div>';
+                }, 500);
+            } else if (data.status === 'error') {
+                showToast(data.message || 'Fehler beim Versenden der Nachricht.', 'error');
+            }
+        } catch (e) {
+            console.log('Form updated via HTMX');
+        }
+    } else if (event.detail.xhr.status >= 400) {
+        showToast('Fehler beim Versenden. Bitte versuche es später erneut.', 'error');
+    }
+});
+
+function showToast(message, type = 'success') {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    document.getElementById('toast-container').appendChild(toast);
+    setTimeout(() => toast.remove(), 5000);
+}
+</script>
+
+</body>
+</html>
