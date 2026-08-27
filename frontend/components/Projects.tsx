@@ -49,7 +49,7 @@ export function Projects() {
             >
               <h3 className="text-xl font-bold mb-2">{project.title}</h3>
               <p className="text-muted mb-4">{project.description}</p>
-              
+
               <div className="flex flex-wrap gap-2 mb-4">
                 {project.technologies.map((tech) => (
                   <span
