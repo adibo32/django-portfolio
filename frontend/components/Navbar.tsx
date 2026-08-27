@@ -1,177 +1,158 @@
 "use client";
-import { useState, useEffect } from "react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
+
+import { useState } from "react";
+import { useContext } from "react";
 import { List, X } from "@phosphor-icons/react";
 import { motion } from "motion/react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { LanguageContext } from "@/app/layout";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [currentLang, setCurrentLang] = useState("de");
-  const [showLangMenu, setShowLangMenu] = useState(false);
+  
+  // 1. Language aus dem GLOBAL Context holen (nicht lokal!)
+  const { language, setLanguage } = useContext(LanguageContext);
   const pathname = usePathname();
 
   const navLinks = [
-    { label: "Home", href: "/" },
+    { label: "Startseite", href: "/" },
     { label: "Über mich", href: "/about" },
+    { label: "Kompetenzen", href: "/about#services" },
     { label: "Projekte", href: "/projects" },
     { label: "Kontakt", href: "/contact" },
   ];
 
+  // 2. Sprachen mit Flag-Icons
   const languages = [
-    { code: "de", name: "Deutsch", flag: "🇩🇪" },
-    { code: "en", name: "English", flag: "🇬🇧" },
-    { code: "ar", name: "العربية", flag: "🇸🇦" },
-    { code: "fr", name: "Français", flag: "🇫🇷" },
-  ];
-
-  // Sprache aus localStorage laden
-  useEffect(() => {
-    const saved = localStorage.getItem("language");
-    if (saved) setCurrentLang(saved);
-  }, []);
-
-  const handleLanguageChange = (lang: string) => {
-    setCurrentLang(lang);
-    localStorage.setItem("language", lang);
-    setShowLangMenu(false);
-  };
+    { code: "de", flag: "🇩🇪", label: "Deutsch" },
+    { code: "en", flag: "🇬🇧", label: "English" },
+    { code: "ar", flag: "🇸🇦", label: "العربية" },
+    { code: "fr", flag: "🇫🇷", label: "Français" },
+  ] as const;
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
-    return pathname.startsWith(href);
+    return pathname.startsWith(href.split("#")[0]);
   };
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container-max flex items-center justify-between h-16">
-        {/* Logo */}
+        {/* Logo mit neuem Text */}
         <Link
           href="/"
-          className="font-bold text-xl text-accent hover:text-accent-hover transition-colors"
+          className="text-lg font-bold text-foreground hover:text-accent transition-colors"
         >
           Adib-dev
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
           {navLinks.map((link) => (
             <Link
-              key={link.href}
+              key={link.label}
               href={link.href}
-              className={`text-sm font-medium transition-colors ${
+              className={`text-sm transition-colors ${
                 isActive(link.href)
-                  ? "text-accent"
-                  : "text-foreground hover:text-accent"
+                  ? "text-accent font-semibold"
+                  : "text-muted hover:text-foreground"
               }`}
             >
               {link.label}
             </Link>
           ))}
 
-          {/* CTA Button */}
+          {/* 3. Language Selector mit Flags */}
+          <div className="flex items-center gap-2 ml-4 pl-4 border-l border-border">
+            {languages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => setLanguage(lang.code as "de" | "en" | "ar" | "fr")}
+                title={lang.label}
+                className={`text-lg px-2 py-1 rounded transition-all ${
+                  language === lang.code
+                    ? "bg-accent/20 text-accent scale-110"
+                    : "text-muted hover:text-foreground"
+                }`}
+              >
+                {lang.flag}
+              </button>
+            ))}
+          </div>
+
           <Link
             href="/contact"
-            className="px-6 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover transition-colors"
+            className="text-sm px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors"
           >
             Projekt starten
           </Link>
-
-          {/* Language Selector */}
-          <div className="relative">
-            <button
-              onClick={() => setShowLangMenu(!showLangMenu)}
-              className="text-lg hover:text-accent transition-colors"
-              title="Sprache wechseln"
-            >
-              {languages.find(l => l.code === currentLang)?.flag}
-            </button>
-            {showLangMenu && (
-              <div className="absolute right-0 mt-2 w-40 bg-surface border border-border rounded-lg shadow-lg z-50">
-                {languages.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
-                    className="w-full text-left px-4 py-2 hover:bg-background transition-colors flex items-center gap-2"
-                  >
-                    <span>{lang.flag}</span>
-                    <span className="text-sm">{lang.name}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
 
         {/* Mobile Menu Button */}
         <button
+          className="md:hidden p-2 text-foreground"
           onClick={() => setIsOpen(!isOpen)}
-          className="md:hidden p-2 text-foreground hover:text-accent transition-colors"
           aria-label="Toggle menu"
         >
-          {isOpen ? (
-            <X size={24} weight="bold" />
-          ) : (
-            <List size={24} weight="bold" />
-          )}
+          {isOpen ? <X size={24} /> : <List size={24} />}
         </button>
+      </div>
 
-        {/* Mobile Navigation */}
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="absolute top-full left-0 right-0 bg-background border-b border-border md:hidden"
-          >
-            <div className="container-max py-4 flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive(link.href)
-                      ? "text-accent"
-                      : "text-foreground hover:text-accent"
-                  }`}
-                  onClick={() => setIsOpen(false)}
-                >
-                  {link.label}
-                </Link>
-              ))}
-
-              {/* Mobile CTA */}
+      {/* Mobile Menu */}
+      {isOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          className="md:hidden border-t border-border bg-surface"
+        >
+          <div className="container-max py-4 flex flex-col gap-4">
+            {navLinks.map((link) => (
               <Link
-                href="/contact"
-                className="px-6 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover transition-colors text-center"
+                key={link.label}
+                href={link.href}
+                className={`text-sm transition-colors ${
+                  isActive(link.href)
+                    ? "text-accent font-semibold"
+                    : "text-muted hover:text-foreground"
+                }`}
                 onClick={() => setIsOpen(false)}
               >
-                Projekt starten
+                {link.label}
               </Link>
+            ))}
 
-              {/* Mobile Language Selector */}
-              <div className="border-t border-border pt-4">
-                <p className="text-xs font-semibold text-muted mb-2">Sprache:</p>
-                <div className="flex gap-2">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      onClick={() => handleLanguageChange(lang.code)}
-                      className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
-                        currentLang === lang.code
-                          ? "bg-accent text-white"
-                          : "bg-surface hover:bg-background"
-                      }`}
-                    >
-                      {lang.flag}
-                    </button>
-                  ))}
-                </div>
-              </div>
+            {/* Mobile Language Selector */}
+            <div className="flex items-center gap-2 pt-4 border-t border-border">
+              {languages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setLanguage(lang.code as "de" | "en" | "ar" | "fr");
+                    setIsOpen(false);
+                  }}
+                  title={lang.label}
+                  className={`text-lg px-2 py-1 rounded transition-all ${
+                    language === lang.code
+                      ? "bg-accent/20 text-accent scale-110"
+                      : "text-muted hover:text-foreground"
+                  }`}
+                >
+                  {lang.flag}
+                </button>
+              ))}
             </div>
-          </motion.div>
-        )}
-      </div>
+
+            <Link
+              href="/contact"
+              className="text-sm px-4 py-2 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors text-center"
+              onClick={() => setIsOpen(false)}
+            >
+              Projekt starten
+            </Link>
+          </div>
+        </motion.div>
+      )}
     </nav>
   );
 }
