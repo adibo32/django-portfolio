@@ -2,7 +2,7 @@
 
 import { motion } from "motion/react";
 import Link from "next/link";
-import { ArrowRight, Github } from "@phosphor-icons/react";
+import { ArrowRight, GithubLogo } from "@phosphor-icons/react";
 
 export function Projects() {
   const projects = [
