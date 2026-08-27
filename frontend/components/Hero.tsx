@@ -57,13 +57,13 @@ export function Hero() {
               className="flex flex-col sm:flex-row gap-4"
             >
               <a
-                href="#contact"
+                href="/contact"
                 className="px-8 py-3 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover transition-all transform hover:-translate-y-0.5 shadow-lg hover:shadow-xl text-center"
               >
                 Projekt besprechen
               </a>
               <a
-                href="#projects"
+                href="/projects"
                 className="px-8 py-3 border-2 border-accent text-accent font-semibold rounded-lg hover:bg-accent/10 transition-all text-center"
               >
                 Projekte ansehen
