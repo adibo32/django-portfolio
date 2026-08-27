@@ -25,6 +25,17 @@ export function Navbar() {
 
   const [currentLang, setCurrentLang] = useState("de");
   const [showLangMenu, setShowLangMenu] = useState(false);
+    useEffect(() => {
+    // Sprache aus localStorage laden
+    const saved = localStorage.getItem("language");
+    if (saved) setCurrentLang(saved);
+  }, []);
+
+  const handleLanguageChange = (lang: string) => {
+    setCurrentLang(lang);
+    localStorage.setItem("language", lang);
+    setShowLangMenu(false);
+  };
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -41,6 +52,13 @@ export function Navbar() {
         >
           Adib-dev
         </Link>
+                  {/* CTA Button */}
+          <Link
+            href="/contact"
+            className="px-6 py-2 bg-accent text-white font-semibold rounded-lg hover:bg-accent-hover transition-colors"
+          >
+            Projekt starten
+          </Link>
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center gap-8">
@@ -73,7 +91,7 @@ export function Navbar() {
                   <button
                     key={lang.code}
                     onClick={() => {
-                      setCurrentLang(lang.code);
+                      onClick={() => handleLanguageChange(lang.code)
                       setShowLangMenu(false);
                     }}
                     className="w-full text-left px-4 py-2 hover:bg-background transition-colors flex items-center gap-2"
@@ -86,6 +104,25 @@ export function Navbar() {
             )}
           </div>
 
+        {/* Mobile Language Selector */}
+              <div className="border-t border-border pt-4">
+                <p className="text-xs font-semibold text-muted mb-2">Sprache:</p>
+                <div className="flex gap-2">
+                  {languages.map((lang) => (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLanguageChange(lang.code)}
+                      className={`flex-1 py-2 px-3 rounded text-sm font-medium transition-colors ${
+                        currentLang === lang.code
+                          ? "bg-accent text-white"
+                          : "bg-surface hover:bg-background"
+                      }`}
+                    >
+                      {lang.flag}
+                    </button>
+                  ))}
+                </div>
+              </div>
         {/* Mobile Menu Button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
