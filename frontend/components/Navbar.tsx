@@ -16,6 +16,15 @@ export function Navbar() {
     { label: "Projekte", href: "/projects" },
     { label: "Kontakt", href: "/contact" },
   ];
+  const languages = [
+    { code: "de", name: "Deutsch", flag: "🇩🇪" },
+    { code: "en", name: "English", flag: "🇬🇧" },
+    { code: "ar", name: "العربية", flag: "🇸🇦" },
+    { code: "fr", name: "Français", flag: "🇫🇷" },
+  ];
+
+  const [currentLang, setCurrentLang] = useState("de");
+  const [showLangMenu, setShowLangMenu] = useState(false);
 
   const isActive = (href: string) => {
     if (href === "/") return pathname === "/";
@@ -49,6 +58,33 @@ export function Navbar() {
             </Link>
           ))}
         </div>
+                  {/* Language Selector */}
+          <div className="relative">
+            <button
+              onClick={() => setShowLangMenu(!showLangMenu)}
+              className="text-lg hover:text-accent transition-colors"
+              title="Sprache wechseln"
+            >
+              {languages.find(l => l.code === currentLang)?.flag}
+            </button>
+            {showLangMenu && (
+              <div className="absolute right-0 mt-2 w-40 bg-surface border border-border rounded-lg shadow-lg z-50">
+                {languages.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setCurrentLang(lang.code);
+                      setShowLangMenu(false);
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-background transition-colors flex items-center gap-2"
+                  >
+                    <span>{lang.flag}</span>
+                    <span className="text-sm">{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
         {/* Mobile Menu Button */}
         <button
