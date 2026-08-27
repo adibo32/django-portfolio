@@ -30,7 +30,7 @@ export function Navbar() {
           href="/"
           className="font-bold text-xl text-accent hover:text-accent-hover transition-colors"
         >
-          Adib.
+          Adib-dev
         </Link>
 
         {/* Desktop Navigation */}
