@@ -1,8 +1,8 @@
 {
-  "buildCommand": "npm ci && npm run build",
-  "installCommand": "npm ci",
-  "outputDirectory": ".next",
+  "$schema": "https://vercel.com/schemas/vercel.json",
+  "buildCommand": "cd frontend && npm ci && npm run build",
+  "installCommand": "cd frontend && npm ci",
+  "outputDirectory": "frontend/.next",
   "framework": "nextjs",
-  "regions": ["iad1"],
-  "root": "frontend"
+  "regions": ["iad1"]
 }
