@@ -75,5 +75,9 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:3000').split(',')
 CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'http://localhost:3000,http://127.0.0.1:3000').split(',')
+CSRF_COOKIE_HTTPONLY = False  # Wichtig für JavaScript CSRF Token
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'tadib24@gmail.com')
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', CONTACT_EMAIL)  # Fallback zu CONTACT_EMAIL
+EMAIL_FROM_EMAIL = os.getenv('EMAIL_FROM_EMAIL', CONTACT_EMAIL)

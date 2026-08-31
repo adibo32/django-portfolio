@@ -4,6 +4,26 @@ import { useState, useEffect } from "react";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
+// Helper function to get CSRF token from cookies
+function getCsrfToken(): string {
+  if (typeof document === 'undefined') return '';
+
+  const name = 'csrftoken';
+  let cookieValue = '';
+
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+
 export function ContactForm() {
   const [isClient, setIsClient] = useState(false);
   const [formState, setFormState] = useState<FormState>("idle");
@@ -44,22 +64,40 @@ export function ContactForm() {
 
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
+      const csrfToken = getCsrfToken();
+
       const response = await fetch(`${apiUrl}/submissions/`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          ...(csrfToken && { "X-CSRFToken": csrfToken }),
         },
+        credentials: "include", // ✅ WICHTIG: Sendet Cookies mit (für CORS & CSRF)
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || "Fehler beim Versenden der Anfrage");
+        // Try to parse error details
+        let errorMessage = "Fehler beim Versenden der Anfrage";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.detail || errorData.message || errorMessage;
+        } catch (e) {
+          // Response was not JSON, use status text
+          if (response.status === 403) {
+            errorMessage = "CSRF-Validierung fehlgeschlagen. Bitte aktualisiere die Seite.";
+          } else if (response.status === 0) {
+            errorMessage = "Verbindung zum Server fehlgeschlagen (Failed to fetch). Prüfe die API-URL und stelle sicher, dass das Backend läuft.";
+          } else {
+            errorMessage = `Server-Fehler: ${response.status} ${response.statusText}`;
+          }
+        }
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
       setFormState("success");
-      
+
       // Reset form
       setFormData({
         name: "",
@@ -76,11 +114,20 @@ export function ContactForm() {
       setTimeout(() => setFormState("idle"), 5000);
     } catch (error) {
       setFormState("error");
-      setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : "Ein Fehler ist aufgetreten. Bitte versuche es später erneut."
-      );
+
+      // Better error message handling
+      let errorMessage = "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.";
+
+      if (error instanceof TypeError && error.message === "Failed to fetch") {
+        errorMessage = `❌ Verbindungsfehler: Backend antwortet nicht. Prüfe:
+1. Läuft das Django Backend? (python manage.py runserver)
+2. Korrekte API-URL in .env.local?
+3. Firewall blockiert Verbindung?`;
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+
+      setErrorMessage(errorMessage);
     }
   };
 

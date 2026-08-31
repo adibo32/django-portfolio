@@ -1,22 +1,12 @@
-<<<<<<< HEAD
-# Dependencies
-node_modules/
-venv/
-env/
-.venv/
-backend/venv/
-
-# Next.js
-.next/
-out/
-build/
-=======
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+env/
+venv/
+ENV/
 build/
 develop-eggs/
 dist/
@@ -29,45 +19,50 @@ parts/
 sdist/
 var/
 wheels/
-pip-wheel-metadata/
-share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
-
-# Virtual Environment
-venv/
-env/
-ENV/
-.venv
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.json
+coverage.xml
+*.cover
 
 # Django
 *.log
 local_settings.py
 db.sqlite3
-db.sqlite3-journal
-/media
-/staticfiles
->>>>>>> be0f7d0265c9bf43cfe2cd0238085b688510a252
-
-# Environment variables
+/staticfiles/
+/media/
 .env
 .env.local
 .env.*.local
-<<<<<<< HEAD
-.env.development.local
-.env.test.local
-.env.production.local
 
-# Django
-__pycache__/
-*.py[cod]
-*$py.class
-*.sqlite3
-db.sqlite3
-*.db
-/staticfiles/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Node/Frontend
+node_modules/
+npm-debug.log
+yarn-error.log
+.next/
+out/
+dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
 
 # OS
 .DS_Store
@@ -76,32 +71,15 @@ db.sqlite3
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db
-=======
->>>>>>> be0f7d0265c9bf43cfe2cd0238085b688510a252
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
+# Temporary
+*.tmp
+*.bak
 *~
-<<<<<<< HEAD
+.cache/
+temp/
 
-# Logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-=======
-.DS_Store
-
-# OS
-Thumbs.db
-
-# Testing
-.coverage
-htmlcov/
-
-# Static files during development
-/static
->>>>>>> be0f7d0265c9bf43cfe2cd0238085b688510a252
+# Build artifacts
+build/
+dist/
+*.egg-info/
