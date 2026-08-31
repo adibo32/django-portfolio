@@ -1,0 +1,15 @@
+backend/
+.env
+.env.*
+.git
+.gitignore
+README.md
+SETUP_INSTRUCTIONS.md
+GIT_CLEANUP_INSTRUCTIONS.md
+README_PROFESSIONAL.md
+db.sqlite3
+.pytest_cache
+htmlcov
+.coverage
+coverage.json
+node_modules
