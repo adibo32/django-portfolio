@@ -3,9 +3,8 @@ services:
     name: adib-portfolio-backend
     runtime: python
     pythonVersion: 3.10
-    workingDirectory: backend
-    buildCommand: "pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate"
-    startCommand: "gunicorn config.wsgi:application --workers 4 --bind 0.0.0.0:8000"
+    buildCommand: "bash build.sh"
+    startCommand: "cd backend && gunicorn config.wsgi:application --workers 4 --bind 0.0.0.0:8000"
     envVars:
       - key: PYTHON_VERSION
         value: "3.10"
