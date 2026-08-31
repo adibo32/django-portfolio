@@ -4,6 +4,5 @@
   "outputDirectory": ".next",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "root": "frontend",
-  "ignoreCommand": "git diff --quiet HEAD~ HEAD -- backend/ DEBUGGING_GUIDE.md QUICK_START.md SETUP_GUIDE_EN.md"
+  "root": "frontend"
 }
