@@ -1,7 +1,8 @@
 {
-  "buildCommand": "npm install --legacy-peer-deps --prefix ./frontend && npm run build --prefix ./frontend",
-  "installCommand": "npm install --legacy-peer-deps --prefix ./frontend",
-  "outputDirectory": "./frontend/.next",
+  "buildCommand": "npm ci && npm run build",
+  "installCommand": "npm ci",
+  "outputDirectory": ".next",
   "framework": "nextjs",
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "root": "frontend"
 }
