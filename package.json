@@ -1,0 +1,15 @@
+{
+  "name": "adib-portfolio-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Adib Portfolio - Next.js Frontend + Django Backend",
+  "scripts": {
+    "dev": "cd frontend && npm run dev",
+    "build": "cd frontend && npm ci && npm run build",
+    "start": "cd frontend && npm run start",
+    "install": "cd frontend && npm ci"
+  },
+  "keywords": ["portfolio", "next.js", "django"],
+  "author": "Adib",
+  "license": "MIT"
+}
