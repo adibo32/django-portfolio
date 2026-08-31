@@ -1,9 +1,12 @@
 {
   "$schema": "https://vercel.com/schemas/vercel.json",
-  "buildCommand": "npm run build",
-  "installCommand": "npm install",
+  "buildCommand": "cd frontend && npm install --prefer-offline --no-audit && npm run build",
+  "installCommand": "cd frontend && npm install --prefer-offline --no-audit",
   "outputDirectory": "frontend/.next",
   "framework": "nextjs",
   "regions": ["iad1"],
-  "nodeVersion": "18.x"
+  "nodeVersion": "18.x",
+  "env": {
+    "NEXT_TELEMETRY_DISABLED": "1"
+  }
 }
