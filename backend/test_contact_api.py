@@ -30,7 +30,9 @@ def client():
 
 
 @pytest.mark.parametrize('url', ['/api/submissions/', '/api/contact/'])
-def test_create_saves_and_sends_two_emails(client, url):
+def test_create_saves_and_sends_two_emails(client, url, settings):
+    settings.SEND_USER_CONFIRMATION = True
+    settings.RESEND_API_KEY = ''
     resp = client.post(url, VALID, format='json')
     assert resp.status_code == 201
     assert ContactSubmission.objects.count() == 1
@@ -84,3 +86,46 @@ def test_newline_in_name_does_not_break_email_header(client):
     resp = client.post('/api/submissions/', {**VALID, 'name': 'Max\nBcc: evil@example.com'}, format='json')
     assert resp.status_code == 201
     assert '\n' not in mail.outbox[0].subject
+
+
+def test_resend_api_used_when_key_set(client, settings):
+    from unittest import mock
+    settings.RESEND_API_KEY = 're_test_key'
+    settings.RESEND_FROM = 'Adib Portfolio <onboarding@resend.dev>'
+    settings.SEND_USER_CONFIRMATION = False
+    with mock.patch('api.views.urllib.request.urlopen') as urlopen:
+        resp = client.post('/api/submissions/', VALID, format='json')
+    assert resp.status_code == 201
+    assert urlopen.call_count == 1  # nur Admin-Mail, keine Bestätigung
+    req = urlopen.call_args[0][0]
+    assert req.full_url == 'https://api.resend.com/emails'
+    assert req.get_header('Authorization') == 'Bearer re_test_key'
+    assert len(mail.outbox) == 0  # SMTP-Pfad wurde nicht benutzt
+
+
+def test_resend_confirmation_sent_with_own_domain(client, settings):
+    from unittest import mock
+    settings.RESEND_API_KEY = 're_test_key'
+    settings.RESEND_FROM = 'Adib <kontakt@example.com>'
+    settings.SEND_USER_CONFIRMATION = True
+    with mock.patch('api.views.urllib.request.urlopen') as urlopen:
+        client.post('/api/submissions/', VALID, format='json')
+    assert urlopen.call_count == 2
+
+
+def test_resend_failure_keeps_submission(client, settings):
+    from unittest import mock
+    settings.RESEND_API_KEY = 're_test_key'
+    with mock.patch('api.views.urllib.request.urlopen', side_effect=OSError('boom')):
+        resp = client.post('/api/contact/', VALID, format='json')
+    assert resp.status_code == 201
+    assert resp.json()['email_sent'] is False
+    assert ContactSubmission.objects.count() == 1
+
+
+def test_no_confirmation_by_default_with_resend_sandbox_sender(client, settings):
+    settings.RESEND_API_KEY = ''
+    settings.SEND_USER_CONFIRMATION = False
+    client.post('/api/submissions/', VALID, format='json')
+    assert len(mail.outbox) == 1
+    assert mail.outbox[0].to == [settings.CONTACT_EMAIL]

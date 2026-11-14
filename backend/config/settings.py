@@ -128,6 +128,17 @@ EMAIL_BACKEND = os.getenv(
     else 'django.core.mail.backends.console.EmailBackend',
 )
 EMAIL_TIMEOUT = 10  # Sekunden, damit ein hängender SMTP-Server die Anfrage nicht blockiert
+
+# HTTPS-E-Mail-API (Resend). Nötig auf Render Free, dort ist ausgehendes SMTP gesperrt.
+RESEND_API_KEY = os.getenv('RESEND_API_KEY', '')
+RESEND_FROM = os.getenv('RESEND_FROM', 'Adib Portfolio <onboarding@resend.dev>')
+# Mit dem Test-Absender onboarding@resend.dev darf Resend nur an die eigene Konto-Adresse senden.
+# Die Bestätigung an Besucher ist daher nur mit verifizierter eigener Domain sinnvoll.
+_confirm = os.getenv('SEND_USER_CONFIRMATION')
+SEND_USER_CONFIRMATION = (
+    _confirm.lower() == 'true' if _confirm is not None
+    else 'resend.dev' not in RESEND_FROM
+)
 CONTACT_EMAIL = os.getenv('CONTACT_EMAIL', 'tadib24@gmail.com')
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
