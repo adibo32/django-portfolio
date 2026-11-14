@@ -8,4 +8,5 @@ router.register(r'submissions', views.ContactSubmissionViewSet, basename='submis
 urlpatterns = [
     path('', include(router.urls)),
     path('contact/', views.contact_submit, name='contact-submit'),
+    path('health/', views.health, name='health'),
 ]

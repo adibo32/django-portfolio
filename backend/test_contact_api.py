@@ -1,0 +1,86 @@
+"""Tests für die öffentliche Kontakt-API (echte Felder, echte Rechte)."""
+import pytest
+from django.core import mail
+from django.core.cache import cache
+from django.test import override_settings
+from rest_framework.test import APIClient
+
+from api.models import ContactSubmission
+
+pytestmark = pytest.mark.django_db
+
+VALID = {
+    'name': 'Max Mustermann',
+    'email': 'max@example.com',
+    'project_type': 'Odoo',
+    'description': 'Ich brauche eine Odoo-Erweiterung für meinen Shop, bitte melde dich.',
+}
+
+
+@pytest.fixture(autouse=True)
+def _clean_throttle_cache():
+    cache.clear()
+    yield
+    cache.clear()
+
+
+@pytest.fixture
+def client():
+    return APIClient()
+
+
+@pytest.mark.parametrize('url', ['/api/submissions/', '/api/contact/'])
+def test_create_saves_and_sends_two_emails(client, url):
+    resp = client.post(url, VALID, format='json')
+    assert resp.status_code == 201
+    assert ContactSubmission.objects.count() == 1
+    assert len(mail.outbox) == 2
+    assert mail.outbox[0].reply_to == [VALID['email']]
+    assert mail.outbox[1].to == [VALID['email']]
+
+
+def test_create_response_does_not_leak_other_data(client):
+    resp = client.post('/api/submissions/', VALID, format='json')
+    assert 'ip_address' not in resp.json()
+
+
+def test_public_cannot_list_read_update_or_delete(client):
+    obj = ContactSubmission.objects.create(**VALID)
+    assert client.get('/api/submissions/').status_code == 405
+    assert client.get(f'/api/submissions/{obj.id}/').status_code == 404
+    assert client.delete(f'/api/submissions/{obj.id}/').status_code == 404
+    assert client.patch(f'/api/submissions/{obj.id}/', {'name': 'x'}, format='json').status_code == 404
+    assert ContactSubmission.objects.count() == 1
+
+
+@pytest.mark.parametrize('payload', [
+    {**VALID, 'email': 'kaputt'},
+    {**VALID, 'description': 'zu kurz'},
+    {**VALID, 'name': 'A'},
+    {**VALID, 'project_type': 'Unbekannt'},
+    {**VALID, 'description': 'Kaufe jetzt Bitcoin und Casino Bonus, ganz sicher!!'},
+])
+def test_invalid_payload_rejected(client, payload):
+    resp = client.post('/api/submissions/', payload, format='json')
+    assert resp.status_code == 400
+    assert ContactSubmission.objects.count() == 0
+
+
+def test_email_failure_does_not_lose_submission(client):
+    with override_settings(EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+                           EMAIL_HOST='127.0.0.1', EMAIL_PORT=1, EMAIL_TIMEOUT=1):
+        resp = client.post('/api/contact/', VALID, format='json')
+    assert resp.status_code == 201
+    assert resp.json()['email_sent'] is False
+    assert ContactSubmission.objects.count() == 1
+
+
+def test_rate_limit_5_per_hour(client):
+    codes = [client.post('/api/submissions/', VALID, format='json').status_code for _ in range(6)]
+    assert codes == [201] * 5 + [429]
+
+
+def test_newline_in_name_does_not_break_email_header(client):
+    resp = client.post('/api/submissions/', {**VALID, 'name': 'Max\nBcc: evil@example.com'}, format='json')
+    assert resp.status_code == 201
+    assert '\n' not in mail.outbox[0].subject

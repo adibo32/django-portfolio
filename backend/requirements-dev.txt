@@ -1,0 +1,6 @@
+-r requirements.txt
+pytest==7.4.3
+pytest-django==4.7.0
+pytest-cov
+pytest-mock
+faker==20.1.0

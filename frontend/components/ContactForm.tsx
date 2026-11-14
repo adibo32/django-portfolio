@@ -4,24 +4,33 @@ import { useState, useEffect } from "react";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
-// Helper function to get CSRF token from cookies
-function getCsrfToken(): string {
-  if (typeof document === 'undefined') return '';
+const FIELD_LABELS: Record<string, string> = {
+  name: "Name",
+  email: "E-Mail",
+  phone: "Telefon",
+  project_type: "Projekttyp",
+  description: "Beschreibung",
+};
 
-  const name = 'csrftoken';
-  let cookieValue = '';
-
-  if (document.cookie && document.cookie !== '') {
-    const cookies = document.cookie.split(';');
-    for (let i = 0; i < cookies.length; i++) {
-      const cookie = cookies[i].trim();
-      if (cookie.substring(0, name.length + 1) === (name + '=')) {
-        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-        break;
-      }
-    }
+// Übersetzt Fehlerantworten des Backends (DRF) in eine lesbare Meldung
+async function readError(response: Response): Promise<string> {
+  if (response.status === 429) {
+    return "Zu viele Anfragen. Bitte versuche es in einer Stunde erneut oder schreibe mir direkt an tadib24@gmail.com.";
   }
-  return cookieValue;
+  try {
+    const data = await response.json();
+    if (typeof data?.detail === "string") return data.detail;
+    if (data && typeof data === "object") {
+      const lines = Object.entries(data).map(([field, msgs]) => {
+        const text = Array.isArray(msgs) ? msgs.join(" ") : String(msgs);
+        return `${FIELD_LABELS[field] ?? field}: ${text}`;
+      });
+      if (lines.length) return lines.join(" | ");
+    }
+  } catch {
+    // keine JSON-Antwort
+  }
+  return `Server-Fehler (${response.status}). Bitte versuche es später erneut.`;
 }
 
 export function ContactForm() {
@@ -63,42 +72,19 @@ export function ContactForm() {
     setErrorMessage("");
 
     try {
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api";
-      const csrfToken = getCsrfToken();
+      const apiUrl = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api").replace(/\/$/, "");
 
       const response = await fetch(`${apiUrl}/submissions/`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(csrfToken && { "X-CSRFToken": csrfToken }),
-        },
-        credentials: "include", // ✅ WICHTIG: Sendet Cookies mit (für CORS & CSRF)
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        // Try to parse error details
-        let errorMessage = "Fehler beim Versenden der Anfrage";
-        try {
-          const errorData = await response.json();
-          errorMessage = errorData.detail || errorData.message || errorMessage;
-        } catch (e) {
-          // Response was not JSON, use status text
-          if (response.status === 403) {
-            errorMessage = "CSRF-Validierung fehlgeschlagen. Bitte aktualisiere die Seite.";
-          } else if (response.status === 0) {
-            errorMessage = "Verbindung zum Server fehlgeschlagen (Failed to fetch). Prüfe die API-URL und stelle sicher, dass das Backend läuft.";
-          } else {
-            errorMessage = `Server-Fehler: ${response.status} ${response.statusText}`;
-          }
-        }
-        throw new Error(errorMessage);
+        throw new Error(await readError(response));
       }
 
-      const data = await response.json();
       setFormState("success");
-
-      // Reset form
       setFormData({
         name: "",
         email: "",
@@ -110,24 +96,18 @@ export function ContactForm() {
         description: "",
       });
 
-      // Reset success message after 5 seconds
       setTimeout(() => setFormState("idle"), 5000);
     } catch (error) {
       setFormState("error");
-
-      // Better error message handling
-      let errorMessage = "Ein Fehler ist aufgetreten. Bitte versuche es später erneut.";
-
-      if (error instanceof TypeError && error.message === "Failed to fetch") {
-        errorMessage = `❌ Verbindungsfehler: Backend antwortet nicht. Prüfe:
-1. Läuft das Django Backend? (python manage.py runserver)
-2. Korrekte API-URL in .env.local?
-3. Firewall blockiert Verbindung?`;
+      if (error instanceof TypeError) {
+        setErrorMessage(
+          "Der Server ist gerade nicht erreichbar. Bitte versuche es später erneut oder schreibe mir direkt an tadib24@gmail.com."
+        );
       } else if (error instanceof Error) {
-        errorMessage = error.message;
+        setErrorMessage(error.message);
+      } else {
+        setErrorMessage("Ein Fehler ist aufgetreten. Bitte versuche es später erneut.");
       }
-
-      setErrorMessage(errorMessage);
     }
   };
 
@@ -274,7 +254,7 @@ export function ContactForm() {
         disabled={formState === "loading"}
         className="w-full px-6 py-3 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
-        {formState === "loading" ? "Wird versendet..." : "Anfrage versendet"}
+        {formState === "loading" ? "Wird versendet..." : "Anfrage senden"}
       </button>
     </form>
   );

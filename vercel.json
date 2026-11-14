@@ -1,6 +1,3 @@
 {
-  "buildCommand": "cd frontend && npm install --prefer-offline --no-audit && npm run build",
-  "installCommand": "cd frontend && npm install --prefer-offline --no-audit",
-  "outputDirectory": "frontend/.next",
-  "framework": "nextjs"
+  "$schema": "https://openapi.vercel.sh/vercel.json"
 }
