@@ -59,7 +59,7 @@ export function Footer() {
               <EnvelopeSimple size={20} />
             </a>
             <a
-              href="https://github.com/adibTajouri"
+              href="https://github.com/adibo32"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted hover:text-accent transition-colors"

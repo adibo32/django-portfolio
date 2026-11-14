@@ -1,77 +1,58 @@
 "use client";
 
-import { ArrowDown } from "@phosphor-icons/react";
-import { motion } from "motion/react";
 import Link from "next/link";
 import { useTranslation } from "@/lib/useTranslation";
+import { Orbit } from "@/components/Orbit";
 
 export function Hero() {
-  const t = useTranslation();
+  const t = useTranslation().home.hero;
 
   return (
-    <section className="relative min-h-[100dvh] flex items-center justify-center pt-20 md:pt-0 px-4">
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-20 right-10 w-72 h-72 bg-accent/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-20 left-10 w-72 h-72 bg-accent/5 rounded-full blur-3xl" />
-      </div>
+    <section className="relative overflow-hidden">
+      <div className="blob b1 -left-40 -top-64 size-[720px] bg-accent opacity-30 blur-[130px]" />
+      <div
+        className="blob b2 -right-32 -top-44 size-[640px] bg-accent opacity-20 blur-[120px]"
+        style={{ filter: "blur(120px) hue-rotate(55deg)" }}
+      />
+      <div
+        className="blob b3 left-[38%] top-44 size-[520px] bg-accent opacity-15 blur-[110px]"
+        style={{ filter: "blur(110px) hue-rotate(-40deg)" }}
+      />
+      <div className="gridlines" />
 
-      <div className="container-max max-w-4xl text-center">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          <span className="text-xs font-mono uppercase tracking-widest text-accent mb-4 inline-block">
-            {t.hero.badge}
+      <div className="container-max relative grid items-center gap-10 pb-24 pt-16 md:grid-cols-[1.1fr_0.9fr] md:pb-28">
+        <div>
+          <span className="glass rise-1 inline-flex items-center gap-2.5 rounded-full px-4 py-[7px] font-mono text-[13px] text-[#cfd8d3]">
+            <span className="dot text-accent" />
+            {t.badge}
           </span>
-        </motion.div>
+          <h1 className="rise-1 mt-7 text-[clamp(38px,5.2vw,70px)] font-semibold leading-[1.04] tracking-[-0.045em] text-white">
+            {t.titleStart}
+            <span className="shimmer-text">{t.titleAccent}</span>
+            {t.titleEnd}
+          </h1>
+          <p className="rise-2 mt-7 max-w-[540px] text-xl leading-[1.55] text-muted">
+            {t.description}
+          </p>
+          <div className="rise-3 mt-10 flex flex-wrap gap-3.5">
+            <Link
+              href="/contact"
+              className="btn whitespace-nowrap rounded-full bg-accent px-[30px] py-4 text-base font-semibold text-accent-ink shadow-[0_10px_40px_-10px_var(--accent)]"
+            >
+              {t.cta1}
+            </Link>
+            <Link
+              href="/#projekte"
+              className="btn glass whitespace-nowrap rounded-full px-[30px] py-4 text-base font-medium text-white"
+            >
+              {t.cta2}
+            </Link>
+          </div>
+        </div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="heading-hero mb-6 text-balance"
-        >
-          {t.hero.title}
-        </motion.h1>
-
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-lg text-muted mb-12 max-w-2xl mx-auto leading-relaxed"
-        >
-          {t.hero.description}
-        </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
-        >
-          <Link
-            href="/contact"
-            className="px-8 py-3 bg-accent text-white rounded-lg hover:bg-accent-hover transition-colors font-semibold"
-          >
-            {t.hero.cta1}
-          </Link>
-          <Link
-            href="/projects"
-            className="px-8 py-3 border border-accent text-accent rounded-lg hover:bg-accent/10 transition-colors font-semibold"
-          >
-            {t.hero.cta2}
-          </Link>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex justify-center"
-        >
-          <ArrowDown size={24} className="text-accent animate-bounce" />
-        </motion.div>
+        <div className="hidden justify-center md:flex">
+          <Orbit />
+        </div>
       </div>
     </section>
   );

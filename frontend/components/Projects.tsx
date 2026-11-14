@@ -1,79 +1,88 @@
 "use client";
 
+import { Logo, type LogoName } from "@/lib/logos";
 import { useTranslation } from "@/lib/useTranslation";
-import { motion } from "motion/react";
-// import { GithubLogo, Link as PhosphorLink } from "@phosphor-icons/react";
-import Link from "next/link";
+
+const PROJECTS: {
+  logos: LogoName[];
+  tags: string[];
+  url: string;
+  span: string;
+  bg: string;
+}[] = [
+  {
+    logos: ["odoo", "python"],
+    tags: ["Odoo 16", "Python"],
+    url: "https://github.com/adibo32/odoo-construction-Project",
+    span: "md:col-span-7",
+    bg: "radial-gradient(500px circle at 30% 20%, rgba(197,139,181,0.38), transparent 60%), #0f1412",
+  },
+  {
+    logos: ["django", "kubernetes"],
+    tags: ["Django", "REST", "Kubernetes"],
+    url: "https://github.com/adibo32/translate",
+    span: "md:col-span-5",
+    bg: "radial-gradient(400px circle at 70% 20%, rgba(68,183,139,0.35), transparent 60%), #0f1412",
+  },
+  {
+    logos: ["django", "postgresql"],
+    tags: ["Django", "REST-API"],
+    url: "https://github.com/adibo32/reservation",
+    span: "md:col-span-5",
+    bg: "radial-gradient(400px circle at 30% 80%, rgba(97,218,251,0.25), transparent 60%), #0f1412",
+  },
+  {
+    logos: ["python", "django"],
+    tags: ["Django", "ChatterBot"],
+    url: "https://github.com/adibo32/chatbot",
+    span: "md:col-span-7",
+    bg: "radial-gradient(500px circle at 70% 70%, rgba(217,119,87,0.3), transparent 60%), #0f1412",
+  },
+];
 
 export function Projects() {
-  const t = useTranslation();
-
-  const projects = [
-    {
-      title: "EMKA - Lagerverwaltung",
-      description: "Enterprise Lagerverwaltungssystem mit Odoo ERP",
-      technologies: ["Odoo 16", "Python", "PostgreSQL"],
-      github: "https://github.com/yourusername/emka-project",
-    },
-  ];
+  const t = useTranslation().home.projects;
 
   return (
-    <section className="py-20 md:py-32 bg-surface">
-      <div className="container-max">
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="heading-lg mb-4"
-        >
-          {t.projects.title}
-        </motion.h2>
+    <section id="projekte" className="container-max scroll-mt-24 pb-28">
+      <div className="eyebrow">{t.eyebrow}</div>
+      <h2 className="h2-section mb-12">{t.title}</h2>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="text-lg text-muted mb-12 max-w-2xl"
-        >
-          {t.projects.description}
-        </motion.p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {projects.map((project, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 + idx * 0.1 }}
-              className="p-6 bg-background border border-border rounded-lg hover:border-accent transition-colors"
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-12">
+        {PROJECTS.map((p, i) => (
+          <a
+            key={p.url}
+            href={p.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`card glass ${p.span} flex min-h-[400px] flex-col rounded-3xl`}
+          >
+            <div
+              className="flex min-h-[190px] flex-1 items-center justify-center gap-7"
+              style={{ background: p.bg }}
             >
-              <h3 className="text-xl font-bold mb-2">{project.title}</h3>
-              <p className="text-muted mb-4">{project.description}</p>
-
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.technologies.map((tech) => (
+              {p.logos.map((n) => (
+                <Logo key={n} name={n} size={56} />
+              ))}
+            </div>
+            <div className="px-8 pb-8 pt-7">
+              <h3 className="h3-card mb-2.5 !text-2xl">{t.items[i].name}</h3>
+              <p className="mb-[18px] text-base leading-[1.55] text-muted">
+                {t.items[i].text}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {p.tags.map((tag) => (
                   <span
-                    key={tech}
-                    className="text-xs px-3 py-1 bg-accent/10 text-accent rounded-full"
+                    key={tag}
+                    className="rounded-full border border-white/15 px-3.5 py-[5px] font-mono text-xs text-[#cfd8d3]"
                   >
-                    {tech}
+                    {tag}
                   </span>
                 ))}
               </div>
-
-              <a
-                href={project.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-accent hover:text-accent-hover transition-colors"
-              >
-                {/* <GithubLogo size={18} /> */}
-                GitHub
-                {/* <PhosphorLink size={14} /> */}
-              </a>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          </a>
+        ))}
       </div>
     </section>
   );

@@ -282,7 +282,7 @@ export function Contact() {
             className={`w-full py-3 font-semibold rounded-lg transition-all transform hover:-translate-y-0.5 ${
               formState === "success"
                 ? "bg-accent/50 text-white cursor-not-allowed"
-                : "bg-accent text-white hover:bg-accent-hover"
+                : "bg-accent text-accent-ink hover:bg-accent-hover"
             }`}
           >
             {formState === "loading"

@@ -252,7 +252,7 @@ export function ContactForm() {
       <button
         type="submit"
         disabled={formState === "loading"}
-        className="w-full px-6 py-3 rounded-lg bg-accent text-white font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
+        className="w-full px-6 py-3 rounded-lg bg-accent text-accent-ink font-medium hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
       >
         {formState === "loading" ? "Wird versendet..." : "Anfrage senden"}
       </button>

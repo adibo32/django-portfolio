@@ -1,12 +1,19 @@
 "use client";
 
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { createContext, useState, useEffect, ReactNode } from "react";
 import "./globals.css";
 
-const geist = Geist({ subsets: ["latin"] });
-const geist_mono = Geist_Mono({ subsets: ["latin"] });
+const sans = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-sans-ui",
+  display: "swap",
+});
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-ui",
+  display: "swap",
+});
 
 // 1. Language Context erstellen
 export const LanguageContext = createContext<{
@@ -49,10 +56,12 @@ export default function RootLayout({
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="Adib Tajouri | Odoo Developer & Python Backend Engineer" />
+        <meta name="description" content="Adib Tajouri | Full-Stack-Entwickler für Odoo, Python und Web-Apps" />
         <title>Adib Tajouri | Odoo Developer & Python Backend Engineer</title>
       </head>
-      <body className={`${geist.className} ${geist_mono.className} min-h-screen flex flex-col bg-background text-foreground`}>
+      <body
+        className={`${sans.variable} ${mono.variable} font-sans min-h-screen flex flex-col bg-background text-foreground antialiased`}
+      >
         {/* 5. LanguageContext.Provider um alle Components */}
         <LanguageContext.Provider value={{ language, setLanguage: handleLanguageChange }}>
           <div className="flex-1">{children}</div>
