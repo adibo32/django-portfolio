@@ -1,3 +1,4 @@
+import { YouTubeProjects } from "@/components/YouTubeProjects";
 import { Navbar } from "@/components/Navbar";
 import { Hero } from "@/components/Hero";
 import { TechMarquee } from "@/components/TechMarquee";
@@ -15,6 +16,7 @@ export default function Home() {
         <TechMarquee />
         <ServiceCards />
         <Projects />
+        <YouTubeProjects />
         <ContactCta />
       </main>
       <Footer />
