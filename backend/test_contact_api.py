@@ -129,3 +129,20 @@ def test_no_confirmation_by_default_with_resend_sandbox_sender(client, settings)
     client.post('/api/submissions/', VALID, format='json')
     assert len(mail.outbox) == 1
     assert mail.outbox[0].to == [settings.CONTACT_EMAIL]
+
+
+@pytest.mark.parametrize('url', ['/api/submissions/', '/api/contact/'])
+def test_email_sent_flag_present_on_success(client, url):
+    resp = client.post(url, VALID, format='json')
+    assert resp.status_code == 201
+    assert resp.json()['email_sent'] is True
+
+
+def test_email_sent_flag_false_on_viewset_when_email_fails(client):
+    with override_settings(EMAIL_BACKEND='django.core.mail.backends.smtp.EmailBackend',
+                           EMAIL_HOST='127.0.0.1', EMAIL_PORT=1, EMAIL_TIMEOUT=1,
+                           RESEND_API_KEY=''):
+        resp = client.post('/api/submissions/', VALID, format='json')
+    assert resp.status_code == 201
+    assert resp.json()['email_sent'] is False
+    assert ContactSubmission.objects.count() == 1

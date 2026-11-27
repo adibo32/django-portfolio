@@ -7,7 +7,7 @@
 A professional full-stack application showcasing projects and managing client inquiries with integrated email notifications and CORS/CSRF security.
 
 **Technology Stack:**
-- **Backend:** Django 4.2.8 + Django REST Framework
+- **Backend:** Django 5.2 (LTS) + Django REST Framework
 - **Frontend:** Next.js 16.3.3 (React 19)
 - **Database:** PostgreSQL (Production) / SQLite (Development)
 - **API:** RESTful with CORS & CSRF protection

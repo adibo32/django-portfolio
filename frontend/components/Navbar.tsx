@@ -27,10 +27,10 @@ export function Navbar() {
 
   // 2. Sprachen mit Flag-Icons
   const languages = [
-    { code: "de", flag: "🇩🇪", label: "Deutsch" },
-    { code: "en", flag: "🇬🇧", label: "English" },
-    { code: "ar", flag: "🇸🇦", label: "العربية" },
-    { code: "fr", flag: "🇫🇷", label: "Français" },
+    { code: "de", flag: "DE", label: "Deutsch" },
+    { code: "en", flag: "EN", label: "English" },
+    { code: "ar", flag: "AR", label: "العربية" },
+    { code: "fr", flag: "FR", label: "Français" },
   ] as const;
 
   // Links mit Anker (#) sind nie "aktiv", sonst leuchtet die Startseite doppelt.

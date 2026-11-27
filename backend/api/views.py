@@ -136,9 +136,15 @@ class ContactSubmissionViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet)
     serializer_class = ContactSerializer
     throttle_classes = [ContactRateThrottle]
 
-    def perform_create(self, serializer):
-        submission = serializer.save(ip_address=_client_ip(self.request))
-        send_contact_emails(submission)
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        submission = serializer.save(ip_address=_client_ip(request))
+        email_sent, _ = send_contact_emails(submission)
+        data = dict(serializer.data)
+        data['email_sent'] = email_sent
+        headers = self.get_success_headers(data)
+        return Response(data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 @api_view(['POST'])
