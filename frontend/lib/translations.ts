@@ -14,7 +14,7 @@ const de = {
   },
   home: {
     hero: {
-      badge: "Full-Stack-Entwickler aus Velbert",
+      badge: "Full-Stack-Entwickler aus Düsseldorf",
       titleStart: "Ich baue Software, die Ihren Betrieb ",
       titleAccent: "am Laufen hält",
       titleEnd: ".",
@@ -229,7 +229,7 @@ const en: Dict = {
   },
   home: {
     hero: {
-      badge: "Full-stack developer from Velbert, Germany",
+      badge: "Full-stack developer from Düsseldorf, Germany",
       titleStart: "I build software that keeps your business ",
       titleAccent: "running",
       titleEnd: ".",
