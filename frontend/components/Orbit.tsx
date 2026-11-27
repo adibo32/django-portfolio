@@ -60,7 +60,7 @@ export function Orbit() {
         offset={0.6}
       />
       <div className="glass absolute left-1/2 top-1/2 flex size-[112px] -ml-14 -mt-14 items-center justify-center rounded-full text-[30px] font-bold tracking-[-0.04em] text-white">
-        AD
+        IT
       </div>
     </div>
   );
