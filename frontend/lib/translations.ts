@@ -54,10 +54,6 @@ const de = {
           text: "Odoo-Modul für Bauunternehmen: Projekte, Angebote, Einkauf, Material, Maschinen und Abrechnung.",
         },
         {
-          name: "Übersetzungsverwaltung",
-          text: "Web-App für iOS- und Android-Übersetzungen in mehreren Sprachen, mit Mitarbeiter-Login.",
-        },
-        {
           name: "Hotel-Reservierung",
           text: "Django-Backend mit API für Hotels, Kunden, Flüge und Buchungen.",
         },
@@ -271,10 +267,6 @@ const en: Dict = {
         {
           name: "Construction ERP for Odoo 16",
           text: "Odoo module for construction companies: projects, quotes, purchasing, materials, machines and invoicing.",
-        },
-        {
-          name: "Translation management",
-          text: "Web app for iOS and Android translations in several languages, with employee login.",
         },
         {
           name: "Hotel reservation",
