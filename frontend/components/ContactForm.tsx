@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { CheckCircle, Warning, XCircle } from "@phosphor-icons/react";
 
 type FormState = "idle" | "loading" | "success" | "error";
 
@@ -37,6 +38,10 @@ export function ContactForm() {
   const [isClient, setIsClient] = useState(false);
   const [formState, setFormState] = useState<FormState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState(
+    "Anfrage erfolgreich versendet! Ich werde mich bald bei dir melden."
+  );
+  const [successDegraded, setSuccessDegraded] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -82,6 +87,26 @@ export function ContactForm() {
 
       if (!response.ok) {
         throw new Error(await readError(response));
+      }
+
+      // Backend meldet email_sent=false, wenn die Anfrage gespeichert,
+      // die Benachrichtigungs-Mail aber nicht rausgegangen ist.
+      try {
+        const data = await response.json();
+        if (data?.email_sent === false) {
+          setSuccessDegraded(true);
+          setSuccessMessage(
+            "Anfrage erhalten! Die E-Mail-Benachrichtigung hat gerade nicht funktioniert - schreibe mir sicherheitshalber direkt an tadib24@gmail.com."
+          );
+        } else {
+          setSuccessMessage(
+            "Anfrage erfolgreich versendet! Ich werde mich bald bei dir melden."
+          );
+        }
+      } catch {
+        setSuccessMessage(
+          "Anfrage erfolgreich versendet! Ich werde mich bald bei dir melden."
+        );
       }
 
       setFormState("success");
@@ -237,14 +262,26 @@ export function ContactForm() {
 
       {/* Status Messages */}
       {formState === "success" && (
-        <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-green-500">
-          ✅ Anfrage erfolgreich versendet! Ich werde mich bald bei dir melden.
+        <div
+          className={
+            successDegraded
+              ? "p-4 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-500"
+              : "p-4 rounded-lg bg-green-500/10 border border-green-500/30 text-green-500"
+          }
+        >
+          <span className="inline-flex items-center gap-2">
+            {successDegraded ? <Warning size={20} weight="fill" /> : <CheckCircle size={20} weight="fill" />}
+            <span>{successMessage}</span>
+          </span>
         </div>
       )}
 
       {formState === "error" && (
         <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/30 text-red-500">
-          ❌ {errorMessage}
+          <span className="inline-flex items-center gap-2">
+            <XCircle size={20} weight="fill" />
+            <span>{errorMessage}</span>
+          </span>
         </div>
       )}
 
