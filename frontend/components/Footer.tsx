@@ -1,6 +1,6 @@
 "use client";
 
-import { GithubLogo, LinkedinLogo, EnvelopeSimple } from "@phosphor-icons/react";
+import { GithubLogo, LinkedinLogo, EnvelopeSimple, FacebookLogo } from "@phosphor-icons/react";
 
 export function Footer() {
   return (
@@ -33,7 +33,7 @@ export function Footer() {
             <h4 className="text-sm font-semibold uppercase tracking-widest text-foreground mb-3">
               Location
             </h4>
-            <p className="text-sm text-muted">Velbert, NRW · Offen für Remote</p>
+            <p className="text-sm text-muted">Düsseldorf, NRW · Offen für Remote</p>
           </div>
         </div>
 
@@ -68,7 +68,7 @@ export function Footer() {
               <GithubLogo size={20} />
             </a>
             <a
-              href="https://linkedin.com/in/adib-tajouri"
+              href="https://www.linkedin.com/in/adib-tajouri-ba2768261/"
               target="_blank"
               rel="noopener noreferrer"
               className="text-muted hover:text-accent transition-colors"
@@ -76,11 +76,20 @@ export function Footer() {
             >
               <LinkedinLogo size={20} />
             </a>
+            <a
+              href="https://www.facebook.com/tajouri.adib"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted hover:text-accent transition-colors"
+              aria-label="Facebook"
+            >
+              <FacebookLogo size={20} />
+            </a>
           </div>
 
           {/* Tech */}
           <div className="text-xs text-muted text-center md:text-right">
-            Built with Next.js · Tailwind · Motion
+            Softwareentwickler aus Düsseldorf
           </div>
         </div>
       </div>
