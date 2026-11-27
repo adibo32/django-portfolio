@@ -18,13 +18,6 @@ const PROJECTS: {
     bg: "radial-gradient(500px circle at 30% 20%, rgba(197,139,181,0.38), transparent 60%), #0f1412",
   },
   {
-    logos: ["django", "kubernetes"],
-    tags: ["Django", "REST", "Kubernetes"],
-    url: "https://github.com/adibo32/translate",
-    span: "md:col-span-5",
-    bg: "radial-gradient(400px circle at 70% 20%, rgba(68,183,139,0.35), transparent 60%), #0f1412",
-  },
-  {
     logos: ["django", "postgresql"],
     tags: ["Django", "REST-API"],
     url: "https://github.com/adibo32/reservation",
